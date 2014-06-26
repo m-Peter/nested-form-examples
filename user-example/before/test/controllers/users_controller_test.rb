@@ -2,7 +2,7 @@ require 'test_helper'
 
 class UsersControllerTest < ActionController::TestCase
   setup do
-    @user = users(:one)
+    @user = users(:peter)
   end
 
   test "should get index" do
@@ -17,11 +17,33 @@ class UsersControllerTest < ActionController::TestCase
   end
 
   test "should create user" do
-    assert_difference('User.count') do
-      post :create, user: { age: @user.age, gender: @user.gender, name: @user.name }
+    assert_difference(['User.count', 'Email.count', 'Profile.count']) do
+      post :create, user: {
+        name: "petrakos",
+        age: "23",
+        gender: "0",
+
+        email_attributes: {
+          address: "petrakos@gmail.com"  
+        },
+
+        profile_attributes: {
+          twitter_name: "t_peter",
+          github_name: "g_peter"
+        }
+      }
     end
 
-    assert_redirected_to user_path(assigns(:user))
+    user = assigns(:user)
+
+    assert_redirected_to user_path(user)
+    assert_equal "petrakos", user.name
+    assert_equal 23, user.age
+    assert_equal 0, user.gender
+    assert_equal "petrakos@gmail.com", user.email.address
+    assert_equal "t_peter", user.profile.twitter_name
+    assert_equal "g_peter", user.profile.github_name
+    assert_equal "User: #{user.name} was successfully created.", flash[:notice]
   end
 
   test "should show user" do
@@ -35,8 +57,33 @@ class UsersControllerTest < ActionController::TestCase
   end
 
   test "should update user" do
-    patch :update, id: @user, user: { age: @user.age, gender: @user.gender, name: @user.name }
-    assert_redirected_to user_path(assigns(:user))
+    peter = users(:peter)
+
+    assert_difference(['User.count', 'Email.count', 'Profile.count'], 0) do
+      patch :update, id: @user, user: {
+        age: @user.age,
+        gender: @user.gender,
+        name: "petrakos",
+
+        email_attributes: {
+          address: "petrakos@gmail.com"
+        },
+
+        profile_attributes: {
+          twitter_name: "t_peter",
+          github_name: "g_peter"
+        }
+      }
+    end
+
+    user = assigns(:user)
+
+    assert_redirected_to user_path(user)
+    assert_equal "petrakos", user.name
+    assert_equal "petrakos@gmail.com", user.email.address
+    assert_equal "t_peter", user.profile.twitter_name
+    assert_equal "g_peter", user.profile.github_name
+    assert_equal "User: #{user.name} was successfully updated.", flash[:notice]
   end
 
   test "should destroy user" do
