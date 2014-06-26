@@ -21,8 +21,19 @@
   </div>
   <div class="field">
     <%= f.label :gender %><br>
-    <%= f.number_field :gender %>
+    <%= f.select :gender, User.get_genders_dropdown %>
   </div>
+
+  <h2>Email details</h2>
+  <%= f.fields_for :email do |email_fields| %>
+    <%= render "email", :email => email_fields %>
+  <% end %>
+
+  <h2>Profile details</h2>
+  <%= f.fields_for :profile do |profile_fields| %>
+    <% render "profile", :profile => profile_fields %>
+  <% end %>
+
   <div class="actions">
     <%= f.submit %>
   </div>
