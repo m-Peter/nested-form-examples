@@ -35,12 +35,19 @@ class SongsControllerTest < ActionController::TestCase
 
     song = assigns(:song)
 
+    assert song.valid?
+    assert song.artist.valid?
+    assert song.artist.producer.valid?
     assert_redirected_to song_path(song)
+    
     assert_equal "Diamonds", song.title
     assert_equal "360", song.length
+    
     assert_equal "Karras", song.artist.name
+    
     assert_equal "Phoebos", song.artist.producer.name
     assert_equal "MADog", song.artist.producer.studio
+    
     assert_equal "Song: Diamonds was successfully created.", flash[:notice]
   end
 
@@ -83,8 +90,35 @@ class SongsControllerTest < ActionController::TestCase
   end
 
   test "should update song" do
-    patch :update, id: @song, song: { length: @song.length, title: @song.title }
-    assert_redirected_to song_path(assigns(:song))
+    assert_difference(['Song.count', 'Artist.count', 'Producer.count'], 0) do
+      patch :update, id: @song, song: {
+        title: "Diamonds",
+        length: "360",
+
+        artist_attributes: {
+          name: "Karras",
+
+          producer_attributes: {
+            name: "Phoebos",
+            studio: "MADog"
+          }
+        }
+      }
+    end
+
+    song = assigns(:song)
+
+    assert_redirected_to song_path(song)
+
+    assert_equal "Diamonds", song.title
+    assert_equal "360", song.length
+    
+    assert_equal "Karras", song.artist.name
+    
+    assert_equal "Phoebos", song.artist.producer.name
+    assert_equal "MADog", song.artist.producer.studio
+    
+    assert_equal "Song: Diamonds was successfully updated.", flash[:notice]
   end
 
   test "should destroy song" do
