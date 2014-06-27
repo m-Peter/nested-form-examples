@@ -46,6 +46,41 @@ class UsersControllerTest < ActionController::TestCase
     assert_equal "User: #{user.name} was successfully created.", flash[:notice]
   end
 
+  test "should not create user with invalid params" do
+    peter = users(:peter)
+
+    assert_difference(['User.count', 'Email.count', 'Profile.count'], 0) do
+      post :create, user: {
+        name: peter.name,
+        age: "23",
+        gender: nil,
+
+        email_attributes: {
+          address: peter.email.address
+        },
+
+        profile_attributes: {
+          twitter_name: peter.profile.twitter_name,
+          github_name: nil
+        }
+      }
+    end
+
+    user = assigns(:user)
+
+    assert_not user.valid?
+    assert_not user.email.valid?
+    assert_not user.profile.valid?
+
+    assert_includes user.errors.messages[:name], "has already been taken"
+    assert_includes user.errors.messages[:gender], "can't be blank"
+
+    assert_includes user.email.errors.messages[:address], "has already been taken"
+
+    assert_includes user.profile.errors.messages[:twitter_name], "has already been taken"
+    assert_includes user.profile.errors.messages[:github_name], "can't be blank"
+  end
+
   test "should show user" do
     get :show, id: @user
     assert_response :success
