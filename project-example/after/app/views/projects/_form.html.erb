@@ -1,10 +1,10 @@
-<%= form_for(@project) do |f| %>
-  <% if @project.errors.any? %>
+<%= form_for @project_form do |f| %>
+  <% if @project_form.errors.any? %>
     <div id="error_explanation">
-      <h2><%= pluralize(@project.errors.count, "error") %> prohibited this project from being saved:</h2>
+      <h2><%= pluralize(@project_form.errors.count, "error") %> prohibited this project from being saved:</h2>
 
       <ul>
-      <% @project.errors.full_messages.each do |message| %>
+      <% @project_form.errors.full_messages.each do |message| %>
         <li><%= message %></li>
       <% end %>
       </ul>
@@ -15,6 +15,12 @@
     <%= f.label :name %><br>
     <%= f.text_field :name %>
   </div>
+
+  <h2>Tasks Details</h2>
+  <%= f.fields_for :tasks, @project_form.tasks do |task_fields| %>
+    <%= render "tasks", :task => task_fields %>
+  <% end %>
+
   <div class="actions">
     <%= f.submit %>
   </div>

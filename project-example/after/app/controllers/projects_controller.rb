@@ -1,5 +1,7 @@
 class ProjectsController < ApplicationController
   before_action :set_project, only: [:show, :edit, :update, :destroy]
+  before_action :create_new_form, only: [:new, :create]
+  before_action :create_edit_form, only: [:edit, :update]
 
   # GET /projects
   # GET /projects.json
@@ -14,7 +16,6 @@ class ProjectsController < ApplicationController
 
   # GET /projects/new
   def new
-    @project = Project.new
   end
 
   # GET /projects/1/edit
@@ -24,15 +25,13 @@ class ProjectsController < ApplicationController
   # POST /projects
   # POST /projects.json
   def create
-    @project = Project.new(project_params)
+    @project_form.submit(project_params)
 
     respond_to do |format|
-      if @project.save
-        format.html { redirect_to @project, notice: 'Project was successfully created.' }
-        format.json { render :show, status: :created, location: @project }
+      if @project_form.save
+        format.html { redirect_to @project_form, notice: "Project: #{@project_form.name} was successfully created." }
       else
         format.html { render :new }
-        format.json { render json: @project.errors, status: :unprocessable_entity }
       end
     end
   end
@@ -40,13 +39,13 @@ class ProjectsController < ApplicationController
   # PATCH/PUT /projects/1
   # PATCH/PUT /projects/1.json
   def update
+    @project_form.submit(project_params)
+
     respond_to do |format|
-      if @project.update(project_params)
-        format.html { redirect_to @project, notice: 'Project was successfully updated.' }
-        format.json { render :show, status: :ok, location: @project }
+      if @project_form.save
+        format.html { redirect_to @project_form, notice: "Project: #{@project_form.name} was successfully updated." }
       else
         format.html { render :edit }
-        format.json { render json: @project.errors, status: :unprocessable_entity }
       end
     end
   end
@@ -54,9 +53,11 @@ class ProjectsController < ApplicationController
   # DELETE /projects/1
   # DELETE /projects/1.json
   def destroy
+    name = @project.name
+
     @project.destroy
     respond_to do |format|
-      format.html { redirect_to projects_url, notice: 'Project was successfully destroyed.' }
+      format.html { redirect_to projects_url, notice: "Project: #{name} was successfully destroyed." }
       format.json { head :no_content }
     end
   end
@@ -67,8 +68,17 @@ class ProjectsController < ApplicationController
       @project = Project.find(params[:id])
     end
 
+    def create_new_form
+      project = Project.new
+      @project_form = ProjectForm.new(project)
+    end
+
+    def create_edit_form
+      @project_form = ProjectForm.new(@project)
+    end
+
     # Never trust parameters from the scary internet, only allow the white list through.
     def project_params
-      params.require(:project).permit(:name)
+      params.require(:project).permit(:name, tasks_attributes: [:id, :name])
     end
 end

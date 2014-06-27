@@ -1,0 +1,2 @@
+class TooManyRecords < RuntimeError
+end
