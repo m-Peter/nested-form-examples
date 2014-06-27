@@ -20,6 +20,7 @@ class ProjectsControllerTest < ActionController::TestCase
     assert_difference('Project.count') do
       post :create, project: {
         name: "Life",
+        
         tasks_attributes: {
           "0" => { name: "Eat" },
           "1" => { name: "Pray" },
@@ -30,11 +31,19 @@ class ProjectsControllerTest < ActionController::TestCase
 
     project = assigns(:project)
 
+    assert project.valid?
+    project.tasks.each do |task|
+      assert task.valid?
+      assert task.persisted?
+    end
     assert_redirected_to project_path(project)
+    
     assert_equal "Life", project.name
+    
     assert_equal "Eat", project.tasks[0].name
     assert_equal "Pray", project.tasks[1].name
     assert_equal "Love", project.tasks[2].name
+    
     assert_equal "Project: Life was successfully created.", flash[:notice]
   end
 
@@ -44,6 +53,7 @@ class ProjectsControllerTest < ActionController::TestCase
     assert_difference('Project.count', 0) do
       post :create, project: {
         name: existing_project.name,
+        
         tasks_attributes: {
           "0" => { name: nil },
           "1" => { name: nil },
@@ -55,14 +65,12 @@ class ProjectsControllerTest < ActionController::TestCase
     project = assigns(:project)
 
     assert_not project.valid?
+    assert_includes project.errors.messages[:name], "has already been taken"
+
     project.tasks.each do |task|
       assert_not task.valid?
+      assert_includes task.errors.messages[:name], "can't be blank"
     end
-
-    assert_includes project.errors.messages[:name], "has already been taken"
-    assert_includes project.tasks[0].errors.messages[:name], "can't be blank"
-    assert_includes project.tasks[1].errors.messages[:name], "can't be blank"
-    assert_includes project.tasks[2].errors.messages[:name], "can't be blank"
   end
 
   test "should show project" do
@@ -76,23 +84,29 @@ class ProjectsControllerTest < ActionController::TestCase
   end
 
   test "should update project" do
-    patch :update, id: @project, project: {
-      name: "Car service",
-      tasks_attributes: {
-        "0" => { name: "Wash tires", id: @project.tasks[0].id },
-        "1" => { name: "Clean inside", id: @project.tasks[1].id },
-        "2" => { name: "Check breaks", id: @project.tasks[2].id },
+    assert_difference('Project.count', 0) do
+      patch :update, id: @project, project: {
+        name: "Car service",
+        
+        tasks_attributes: {
+          "0" => { name: "Wash tires", id: @project.tasks[0].id },
+          "1" => { name: "Clean inside", id: @project.tasks[1].id },
+          "2" => { name: "Check breaks", id: @project.tasks[2].id },
+        }
       }
-    }
+    end
 
     project = assigns(:project)
 
     assert_redirected_to project_path(project)
-    assert_equal "Project: Car service was successfully updated.", flash[:notice]
+    
     assert_equal "Car service", project.name
+    
     assert_equal "Wash tires", project.tasks[0].name
     assert_equal "Clean inside", project.tasks[1].name
     assert_equal "Check breaks", project.tasks[2].name
+
+    assert_equal "Project: Car service was successfully updated.", flash[:notice]
   end
 
   test "should destroy project" do
