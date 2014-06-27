@@ -15,6 +15,10 @@ class SurveysController < ApplicationController
   # GET /surveys/new
   def new
     @survey = Survey.new
+    2.times { @survey.questions.build }
+    @survey.questions.each do |question|
+      3.times { question.answers.build }
+    end
   end
 
   # GET /surveys/1/edit
@@ -28,11 +32,9 @@ class SurveysController < ApplicationController
 
     respond_to do |format|
       if @survey.save
-        format.html { redirect_to @survey, notice: 'Survey was successfully created.' }
-        format.json { render :show, status: :created, location: @survey }
+        format.html { redirect_to @survey, notice: "Survey: #{@survey.name} was successfully created." }
       else
         format.html { render :new }
-        format.json { render json: @survey.errors, status: :unprocessable_entity }
       end
     end
   end
@@ -42,11 +44,9 @@ class SurveysController < ApplicationController
   def update
     respond_to do |format|
       if @survey.update(survey_params)
-        format.html { redirect_to @survey, notice: 'Survey was successfully updated.' }
-        format.json { render :show, status: :ok, location: @survey }
+        format.html { redirect_to @survey, notice: "Survey: #{@survey.name} was successfully updated." }
       else
         format.html { render :edit }
-        format.json { render json: @survey.errors, status: :unprocessable_entity }
       end
     end
   end
@@ -54,10 +54,10 @@ class SurveysController < ApplicationController
   # DELETE /surveys/1
   # DELETE /surveys/1.json
   def destroy
+    name = @survey.name
     @survey.destroy
     respond_to do |format|
-      format.html { redirect_to surveys_url, notice: 'Survey was successfully destroyed.' }
-      format.json { head :no_content }
+      format.html { redirect_to surveys_url, notice: "Survey: #{name} was successfully destroyed." }
     end
   end
 
@@ -69,6 +69,6 @@ class SurveysController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def survey_params
-      params.require(:survey).permit(:name)
+      params.require(:survey).permit(:name, questions_attributes: [:id, :content, answers_attributes: [:id, :content]])
     end
 end

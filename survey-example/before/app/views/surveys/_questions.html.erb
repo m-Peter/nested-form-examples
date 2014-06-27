@@ -1,0 +1,9 @@
+<div class="field">
+  <%= question.label :content, "Question" %><br>
+  <%= question.text_area :content, :cols => 30, :rows => 2 %>
+</div>
+
+<h2>Answers</h2>
+<%= question.fields_for :answers do |answer_fields| %>
+  <%= render "answers", :answer => answer_fields %>
+<% end %>
