@@ -36,13 +36,20 @@ class UsersControllerTest < ActionController::TestCase
 
     user = assigns(:user)
 
+    assert user.valid?
+    assert user.email.valid?
+    assert user.profile.valid?
     assert_redirected_to user_path(user)
+    
     assert_equal "petrakos", user.name
     assert_equal 23, user.age
     assert_equal 0, user.gender
+    
     assert_equal "petrakos@gmail.com", user.email.address
+    
     assert_equal "t_peter", user.profile.twitter_name
     assert_equal "g_peter", user.profile.github_name
+    
     assert_equal "User: #{user.name} was successfully created.", flash[:notice]
   end
 
@@ -114,10 +121,14 @@ class UsersControllerTest < ActionController::TestCase
     user = assigns(:user)
 
     assert_redirected_to user_path(user)
+    
     assert_equal "petrakos", user.name
+    
     assert_equal "petrakos@gmail.com", user.email.address
+    
     assert_equal "t_peter", user.profile.twitter_name
     assert_equal "g_peter", user.profile.github_name
+    
     assert_equal "User: #{user.name} was successfully updated.", flash[:notice]
   end
 
