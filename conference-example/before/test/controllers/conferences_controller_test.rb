@@ -36,15 +36,25 @@ class ConferencesControllerTest < ActionController::TestCase
 
     conference = assigns(:conference)
 
+    assert conference.valid?
+    assert conference.speaker.valid?
+    conference.speaker.presentations.each do |presentation|
+      assert presentation.valid?
+      assert presentation.persisted?
+    end
     assert_redirected_to conference_path(conference)
+    
     assert_equal "Euruco", conference.name
     assert_equal "Athens", conference.city
+    
     assert_equal "Petros Markou", conference.speaker.name
     assert_equal "Developer", conference.speaker.occupation
+    
     assert_equal "Ruby OOP", conference.speaker.presentations[0].topic
     assert_equal "1h", conference.speaker.presentations[0].duration
     assert_equal "Ruby Closures", conference.speaker.presentations[1].topic
     assert_equal "1h", conference.speaker.presentations[1].duration
+    
     assert_equal "Conference: #{conference.name} was successfully created.", flash[:notice]
   end
 
@@ -71,6 +81,10 @@ class ConferencesControllerTest < ActionController::TestCase
     conference = assigns(:conference)
 
     assert_not conference.valid?
+    assert_not conference.speaker.valid?
+    conference.speaker.presentations.each do |presentation|
+      assert_not presentation.valid?
+    end
     
     assert_includes conference.errors.messages[:name], "has already been taken"
     assert_includes conference.errors.messages[:city], "can't be blank"
@@ -92,34 +106,40 @@ class ConferencesControllerTest < ActionController::TestCase
   end
 
   test "should update conference" do
-    patch :update, id: @conference, conference: {
-      name: "GoGaruco",
-      city: "Golden State",
+    assert_difference(['Conference.count', 'Speaker.count'], 0) do
+      patch :update, id: @conference, conference: {
+        name: "GoGaruco",
+        city: "Golden State",
 
-      speaker_attributes: {
-        name: "John Doe",
-        occupation: "Developer",
-        id: speakers(:peter),
+        speaker_attributes: {
+          name: "John Doe",
+          occupation: "Developer",
+          id: speakers(:peter),
 
-        presentations_attributes: {
-          "0" => { topic: "Rails OOP", duration: "1h", id: presentations(:ruby_oop).id },
-          "1" => { topic: "Rails Patterns", duration: "1h", id: presentations(:ruby_closures).id },
+          presentations_attributes: {
+            "0" => { topic: "Rails OOP", duration: "1h", id: presentations(:ruby_oop).id },
+            "1" => { topic: "Rails Patterns", duration: "1h", id: presentations(:ruby_closures).id },
+          }
         }
       }
-    }
+    end
 
     conference = assigns(:conference)
 
     assert_redirected_to conference_path(conference)
+    
     assert_equal "GoGaruco", conference.name
     assert_equal "Golden State", conference.city
+    
     assert_equal "John Doe", conference.speaker.name
     assert_equal "Developer", conference.speaker.occupation
+    
     assert_equal "Rails Patterns", conference.speaker.presentations[0].topic
     assert_equal "1h", conference.speaker.presentations[0].duration
     assert_equal "Rails OOP", conference.speaker.presentations[1].topic
     assert_equal "1h", conference.speaker.presentations[1].duration
     assert_equal 2, conference.speaker.presentations.size
+    
     assert_equal "Conference: #{conference.name} was successfully updated.", flash[:notice]
   end
 

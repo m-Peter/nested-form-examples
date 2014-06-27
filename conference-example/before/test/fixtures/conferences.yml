@@ -3,7 +3,3 @@
 ruby:
   name: EuRuCo
   city: Athens
-
-two:
-  name: MyString
-  city: MyString
