@@ -1,9 +1,5 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  name: MyString
-  city: MyString
-
-two:
-  name: MyString
-  city: MyString
+ruby:
+  name: EuRuCo
+  city: Athens
