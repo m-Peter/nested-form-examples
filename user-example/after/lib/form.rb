@@ -9,7 +9,7 @@ class Form
     @model = assign_model(model)
     @forms = []
     self.class_eval &proc
-    
+    enable_autosave
     populate_forms
   end
 
@@ -92,6 +92,11 @@ class Form
   private
 
   ATTRIBUTES_KEY_REGEXP = /^(.+)_attributes$/
+
+  def enable_autosave
+    reflection = association_reflection
+    reflection.autosave = true
+  end
 
   def fill_association_with_attributes(association, attributes)
     assoc_name = find_association_name_in(association).to_sym

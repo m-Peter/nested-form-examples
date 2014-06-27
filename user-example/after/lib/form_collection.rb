@@ -11,7 +11,7 @@ class FormCollection
     @records = records
     @forms = []
     assign_forms
-    enable_autosave
+    #enable_autosave
   end
 
   def submit(params)
@@ -50,15 +50,6 @@ class FormCollection
   end
 
   private
-
-  def association_reflection
-    parent.class.reflect_on_association(association_name)
-  end
-
-  def enable_autosave
-    reflection = association_reflection
-    reflection.autosave = true
-  end
 
   def assign_forms
     if parent.persisted?
