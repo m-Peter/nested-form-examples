@@ -1,11 +1,6 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  name: MyString
-  studio: MyString
-  artist_id: 
-
-two:
-  name: MyString
-  studio: MyString
-  artist_id: 
+jayz:
+  name: Jay-Z 
+  studio: Ztudio 
+  artist: kanye 

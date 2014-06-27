@@ -15,6 +15,8 @@ class SongsController < ApplicationController
   # GET /songs/new
   def new
     @song = Song.new
+    @song.build_artist
+    @song.artist.build_producer
   end
 
   # GET /songs/1/edit
@@ -28,11 +30,9 @@ class SongsController < ApplicationController
 
     respond_to do |format|
       if @song.save
-        format.html { redirect_to @song, notice: 'Song was successfully created.' }
-        format.json { render :show, status: :created, location: @song }
+        format.html { redirect_to @song, notice: "Song: #{@song.title} was successfully created." }
       else
         format.html { render :new }
-        format.json { render json: @song.errors, status: :unprocessable_entity }
       end
     end
   end
@@ -42,11 +42,9 @@ class SongsController < ApplicationController
   def update
     respond_to do |format|
       if @song.update(song_params)
-        format.html { redirect_to @song, notice: 'Song was successfully updated.' }
-        format.json { render :show, status: :ok, location: @song }
+        format.html { redirect_to @song, notice: "Song: #{@song.title} was successfully updated." }
       else
         format.html { render :edit }
-        format.json { render json: @song.errors, status: :unprocessable_entity }
       end
     end
   end
@@ -54,10 +52,10 @@ class SongsController < ApplicationController
   # DELETE /songs/1
   # DELETE /songs/1.json
   def destroy
+    title = @song.title
     @song.destroy
     respond_to do |format|
-      format.html { redirect_to songs_url, notice: 'Song was successfully destroyed.' }
-      format.json { head :no_content }
+      format.html { redirect_to songs_url, notice: "Song: #{title} was successfully destroyed." }
     end
   end
 
@@ -69,6 +67,7 @@ class SongsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def song_params
-      params.require(:song).permit(:title, :length)
+      params.require(:song).permit(:title, :length, artist_attributes: 
+        [:name, producer_attributes: [ :name, :studio ] ] )
     end
 end

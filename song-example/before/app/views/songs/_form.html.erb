@@ -19,6 +19,12 @@
     <%= f.label :length %><br>
     <%= f.text_field :length %>
   </div>
+
+  <h2>Artist Details</h2>
+  <%= f.fields_for :artist do |artist_fields| %>
+    <%= render "artist", :artist => artist_fields %>
+  <% end %>
+
   <div class="actions">
     <%= f.submit %>
   </div>

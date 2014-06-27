@@ -1,9 +1,5 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  title: MyString
-  length: MyString
-
-two:
-  title: MyString
-  length: MyString
+lockdown:
+  title: Love Lockdown 
+  length: 350 
