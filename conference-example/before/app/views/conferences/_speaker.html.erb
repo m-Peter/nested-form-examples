@@ -1,0 +1,14 @@
+<div class="field">
+  <%= speaker.label :name, "Speaker Name" %><br>
+  <%= speaker.text_field :name %>
+</div>
+
+<div class="field">
+  <%= speaker.label :occupation %><br>
+  <%= speaker.text_field :occupation %>
+</div>
+
+<h2>Presentantions Details</h2>
+<%= speaker.fields_for :presentations do |presentations_fields| %>
+  <%= render "presentations", :presentation => presentations_fields %>
+<% end %>

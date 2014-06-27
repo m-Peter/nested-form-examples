@@ -11,6 +11,7 @@
     </div>
   <% end %>
 
+  <h2>Conference Details</h2>
   <div class="field">
     <%= f.label :name %><br>
     <%= f.text_field :name %>
@@ -19,6 +20,12 @@
     <%= f.label :city %><br>
     <%= f.text_field :city %>
   </div>
+
+  <h2>Speaker Details</h2>
+  <%= f.fields_for :speaker do |speaker_fields| %>
+    <%= render "speaker", :speaker => speaker_fields %>
+  <% end %>
+
   <div class="actions">
     <%= f.submit %>
   </div>

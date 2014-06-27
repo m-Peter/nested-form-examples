@@ -15,6 +15,8 @@ class ConferencesController < ApplicationController
   # GET /conferences/new
   def new
     @conference = Conference.new
+    @conference.build_speaker
+    2.times { @conference.speaker.presentations.build }
   end
 
   # GET /conferences/1/edit
@@ -28,11 +30,9 @@ class ConferencesController < ApplicationController
 
     respond_to do |format|
       if @conference.save
-        format.html { redirect_to @conference, notice: 'Conference was successfully created.' }
-        format.json { render :show, status: :created, location: @conference }
+        format.html { redirect_to @conference, notice: "Conference: #{@conference.name} was successfully created." }
       else
         format.html { render :new }
-        format.json { render json: @conference.errors, status: :unprocessable_entity }
       end
     end
   end
@@ -42,11 +42,9 @@ class ConferencesController < ApplicationController
   def update
     respond_to do |format|
       if @conference.update(conference_params)
-        format.html { redirect_to @conference, notice: 'Conference was successfully updated.' }
-        format.json { render :show, status: :ok, location: @conference }
+        format.html { redirect_to @conference, notice: "Conference: #{@conference.name} was successfully updated." }
       else
         format.html { render :edit }
-        format.json { render json: @conference.errors, status: :unprocessable_entity }
       end
     end
   end
@@ -54,10 +52,10 @@ class ConferencesController < ApplicationController
   # DELETE /conferences/1
   # DELETE /conferences/1.json
   def destroy
+    name = @conference.name
     @conference.destroy
     respond_to do |format|
-      format.html { redirect_to conferences_url, notice: 'Conference was successfully destroyed.' }
-      format.json { head :no_content }
+      format.html { redirect_to conferences_url, notice: "Conference: #{name} was successfully destroyed." }
     end
   end
 
@@ -69,6 +67,7 @@ class ConferencesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def conference_params
-      params.require(:conference).permit(:name, :city)
+      params.require(:conference).permit(:name, :city, speaker_attributes: [:id, :name, :occupation, 
+        presentations_attributes: [:id, :topic, :duration]])
     end
 end
