@@ -1,9 +1,9 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  content: MyString
-  question_id: 
+ruby:
+  content: Ruby Programming Language
+  question: one
 
-two:
-  content: MyString
-  question_id: 
+cs:
+  content: CSharp Programming Language
+  question: one
