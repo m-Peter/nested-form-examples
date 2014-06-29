@@ -16,4 +16,20 @@ class SignupForm < AbstractForm
   def subscribed=(checkbox)
     model.subscribed_at = Time.zone.now if checkbox == "1"
   end
+
+  def save
+    if valid?
+      generate_token
+      model.save
+      true
+    else
+      false
+    end
+  end
+
+  def generate_token
+    begin
+      model.token = SecureRandom.hex
+    end while User.exists?(token: model.token)
+  end
 end

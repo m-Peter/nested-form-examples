@@ -16,6 +16,7 @@ class UsersController < ApplicationController
 
     if @signup_form.save
       session[:user_id] = @signup_form.model.id
+      redirect_to @signup_form, notice: "Thank you for signing up!"
     else
       render "new"
     end
