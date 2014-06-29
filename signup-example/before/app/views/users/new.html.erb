@@ -16,18 +16,22 @@
     <%= f.label :username %><br />
     <%= f.text_field :username %>
   </div>
+
   <div class="field">
     <%= f.label :email %><br />
     <%= f.text_field :email %>
   </div>
+
   <div class="field">
     <%= f.label :password %><br />
     <%= f.password_field :password %>
   </div>
+
   <div class="field">
     <%= f.label :password_confirmation %><br />
     <%= f.password_field :password_confirmation %>
   </div>
+
   <div class="field">
     <%= f.check_box :subscribed %>
     <%= f.label :subscribed, "Subscribe to our mailing list." %>
@@ -35,18 +39,24 @@
 
   <%= f.fields_for :profile do |p| %>
     <h3>Profile Details</h3>
+
     <div class="field">
       <%= p.label :twitter_name %><br />
       <%= p.text_field :twitter_name %>
     </div>
+
     <div class="field">
       <%= p.label :github_name %><br />
       <%= p.text_field :github_name %>
     </div>
+
     <div class="field">
       <%= p.label :bio %><br />
       <%= p.text_area :bio, rows: 5, cols: 40 %>
     </div>
   <% end %>
-  <div class="actions"><%= f.submit "Sign Up" %></div>
+
+  <div class="actions">
+    <%= f.submit "Sign Up" %>
+  </div>
 <% end %>
