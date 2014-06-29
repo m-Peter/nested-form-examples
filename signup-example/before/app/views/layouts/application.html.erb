@@ -1,14 +1,25 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title>Before</title>
-  <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
-  <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
-  <%= csrf_meta_tags %>
-</head>
-<body>
+  <head>
+    <title>Users</title>
+    <%= stylesheet_link_tag    "application", media: "all" %>
+    <%= javascript_include_tag "application" %>
+    <%= csrf_meta_tag %>
+  </head>
+  <body>
+    <div id="container">
+      <% if current_user %>
+        Logged in as <%= link_to current_user.username, user_path(current_user) %>.
+        <%= link_to "Log Out", logout_path %>
+      <% else %>
+        <%= link_to "Sign Up", signup_path %> or
+        <%= link_to "Log In", login_path %>
+      <% end %>
 
-<%= yield %>
-
-</body>
+      <% flash.each do |name, msg| %>
+        <p><%= content_tag :div, msg, id: "flash_#{name}" %></p>
+      <% end %>
+      <%= yield %>
+    </div>
+  </body>
 </html>
