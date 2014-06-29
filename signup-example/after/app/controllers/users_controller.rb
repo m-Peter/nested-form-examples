@@ -5,6 +5,7 @@ class UsersController < ApplicationController
   end
 
   def show
+    @user = User.find(params[:id])
   end
 
   def create
@@ -14,18 +15,14 @@ class UsersController < ApplicationController
     @signup_form.submit(user_params)
 
     if @signup_form.save
-      session[:user_id] = @signup_form.user.id
+      session[:user_id] = @signup_form.model.id
     else
       render "new"
     end
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_user
-      @user = User.find(params[:id])
-    end
-
+    
     # Never trust parameters from the scary internet, only allow the white list through.
     def user_params
       params.require(:user).permit(
