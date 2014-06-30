@@ -1,13 +1,7 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  twitter_name: MyString
-  github_name: MyString
-  bio: MyText
-  user_id: 
-
-two:
-  twitter_name: MyString
-  github_name: MyString
-  bio: MyText
-  user_id: 
+peters_profile:
+  twitter_name: PetrosMarkou
+  github_name: m-Peter
+  bio: Currently a GSoC student.
+  user: peter
