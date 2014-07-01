@@ -1,9 +1,17 @@
-<p id="notice"><%= notice %></p>
+<h1>User Profile</h1>
 
-<p>
-  <strong>Email:</strong>
-  <%= @user.email %>
-</p>
+<p>Username: <%= @user.username %></p>
 
-<%= link_to 'Edit', edit_user_path(@user) %> |
-<%= link_to 'Back', users_path %>
+<p>Email: <%= @user.email %></p>
+
+<% if @user.profile.twitter_name.present? %>
+  <p>Twitter: <%= @user.profile.twitter_name %></p>
+<% end %>
+
+<% if @user.profile.github_name.present? %>
+  <p>GitHub: <%= @user.profile.github_name %></p>
+<% end %>
+
+<% if @user.profile.bio.present? %>
+  <p>Bio: <%= @user.profile.bio %></p>
+<% end %>
