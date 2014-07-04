@@ -1,0 +1,20 @@
+<div id="pilot">
+  <div class="field">
+    <%= f.label :first_name %><br>
+    <%= f.text_field :first_name %>
+  </div>
+
+  <div class="field">
+    <%= f.label :last_name %><br>
+    <%= f.text_field :last_name %>
+  </div>
+
+  <div class="field">
+    <%= f.label :call_sign %><br>
+    <%= f.text_field :call_sign %>
+  </div>
+
+  <%= link_to_remove_fields("Delete", f) if f.object.persisted? %>
+</div>
+
+<hr/>
