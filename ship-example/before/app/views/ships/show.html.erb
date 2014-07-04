@@ -1,0 +1,29 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Name:</strong>
+  <%= @ship.name %>
+</p>
+
+<p>
+  <strong>Crew:</strong>
+  <%= @ship.crew %>
+</p>
+
+<p>
+  <strong>Has astromech:</strong>
+  <%= @ship.has_astromech %>
+</p>
+
+<p>
+  <strong>Speed:</strong>
+  <%= @ship.speed %>
+</p>
+
+<p>
+  <strong>Armament:</strong>
+  <%= @ship.armament %>
+</p>
+
+<%= link_to 'Edit', edit_ship_path(@ship) %> |
+<%= link_to 'Back', ships_path %>

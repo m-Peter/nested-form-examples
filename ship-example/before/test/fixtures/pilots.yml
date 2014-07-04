@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  first_name: MyString
+  last_name: MyString
+  call_sign: MyString
+  ship_id: 
+
+two:
+  first_name: MyString
+  last_name: MyString
+  call_sign: MyString
+  ship_id: 
