@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  crew: 1
+  has_astromech: false
+  speed: 1
+  armament: MyText
+
+two:
+  name: MyString
+  crew: 1
+  has_astromech: false
+  speed: 1
+  armament: MyText
