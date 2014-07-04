@@ -1,10 +1,10 @@
-<%= form_for(@ship) do |f| %>
-  <% if @ship.errors.any? %>
+<%= form_for @ship_form do |f| %>
+  <% if @ship_form.errors.any? %>
     <div id="error_explanation">
-      <h2><%= pluralize(@ship.errors.count, "error") %> prohibited this ship from being saved:</h2>
+      <h2><%= pluralize(@ship_form.errors.count, "error") %> prohibited this ship from being saved:</h2>
 
       <ul>
-      <% @ship.errors.full_messages.each do |message| %>
+      <% @ship_form.errors.full_messages.each do |message| %>
         <li><%= message %></li>
       <% end %>
       </ul>
@@ -15,22 +15,36 @@
     <%= f.label :name %><br>
     <%= f.text_field :name %>
   </div>
+
   <div class="field">
     <%= f.label :crew %><br>
     <%= f.number_field :crew %>
   </div>
+
   <div class="field">
     <%= f.label :has_astromech %><br>
     <%= f.check_box :has_astromech %>
   </div>
+
   <div class="field">
     <%= f.label :speed %><br>
     <%= f.number_field :speed %>
   </div>
+
   <div class="field">
     <%= f.label :armament %><br>
     <%= f.text_area :armament %>
   </div>
+
+  <h2>Pilots</h2>
+  <div id="pilots">
+    <%= f.fields_for :pilots, @ship_form.pilots do |pilot_fields| %>
+      <%= render "pilots", :f => pilot_fields %>
+    <% end %>
+  </div>
+
+  <%= link_to_add_fields("Add a Pilot", f, :pilots) %>
+
   <div class="actions">
     <%= f.submit %>
   </div>

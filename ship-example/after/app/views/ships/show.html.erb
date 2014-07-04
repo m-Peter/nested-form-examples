@@ -1,4 +1,4 @@
-<p id="notice"><%= notice %></p>
+<h2>Ship</h2>
 
 <p>
   <strong>Name:</strong>
@@ -24,6 +24,30 @@
   <strong>Armament:</strong>
   <%= @ship.armament %>
 </p>
+
+<h2>Pilots</h2>
+<ol>
+  <% @ship.pilots.each do |pilot| %>
+    <li>
+      <div>
+        <p>
+          <strong>First Name:</strong>
+          <%= pilot.first_name %>
+        </p>
+
+        <p>
+          <strong>Last Name:</strong>
+          <%= pilot.last_name %>
+        </p>
+
+        <p>
+          <strong>Call Sign:</strong>
+          <%= pilot.call_sign %>
+        </p>
+      <div>
+    </li>
+  <% end %>
+</ol>
 
 <%= link_to 'Edit', edit_ship_path(@ship) %> |
 <%= link_to 'Back', ships_path %>

@@ -1,6 +1,11 @@
 module ShipsHelper
   def link_to_remove_fields(name, f, options = {})
-    f.hidden_field(:_destroy) + link_to(name, '#', onclick: "remove_fields(this); return false;")
+    link = link_to(name, '#', onclick: "remove_fields(this); return false;")
+    if f.object.persisted?
+      f.hidden_field(:_destroy) + link
+    else
+      link
+    end
   end
 
   def link_to_add_fields(name, f, association, options = {})
