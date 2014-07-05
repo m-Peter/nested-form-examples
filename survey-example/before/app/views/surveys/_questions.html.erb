@@ -1,9 +1,14 @@
-<div class="field">
-  <%= question.label :content, "Question" %><br>
-  <%= question.text_area :content, :cols => 30, :rows => 2 %>
-</div>
+<div class="fields">
+  <p>
+    <%= f.label :content, "Question" %><br>
+    <%= link_to_remove_fields "remove", f %><br />
+    <%= f.text_area :content, :cols => 30, :rows => 2 %>
+  </p>
 
-<h2>Answers</h2>
-<%= question.fields_for :answers do |answer_fields| %>
-  <%= render "answers", :answer => answer_fields %>
-<% end %>
+  <%= f.fields_for :answers do |builder| %>
+    <%= render "answers", :f => builder %>
+  <% end %>
+
+  <p><%= link_to_add_fields "Add Answer", f, :answers %></p>
+
+</div>

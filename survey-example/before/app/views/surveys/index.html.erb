@@ -1,28 +1,20 @@
 <% if notice %>
   <p id="notice"><%= notice %></p>
 <% end %>
-<h1>Listing surveys</h1>
+<% title "Surveys" %>
 
 <table>
-  <thead>
+  <tr>
+    <th>Name</th>
+  </tr>
+  <% for survey in @surveys %>
     <tr>
-      <th>Name</th>
-      <th colspan="3"></th>
+      <td><%=h survey.name %></td>
+      <td><%= link_to "Show", survey %></td>
+      <td><%= link_to "Edit", edit_survey_path(survey) %></td>
+      <td><%= link_to "Destroy", survey, :confirm => 'Are you sure?', :method => :delete %></td>
     </tr>
-  </thead>
-
-  <tbody>
-    <% @surveys.each do |survey| %>
-      <tr>
-        <td><%= survey.name %></td>
-        <td><%= link_to 'Show', survey %></td>
-        <td><%= link_to 'Edit', edit_survey_path(survey) %></td>
-        <td><%= link_to 'Destroy', survey, method: :delete, data: { confirm: 'Are you sure?' } %></td>
-      </tr>
-    <% end %>
-  </tbody>
+  <% end %>
 </table>
 
-<br>
-
-<%= link_to 'New Survey', new_survey_path %>
+<p><%= link_to "New Survey", new_survey_path %></p>

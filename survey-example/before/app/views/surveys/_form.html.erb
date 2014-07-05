@@ -11,17 +11,18 @@
     </div>
   <% end %>
 
-  <div class="field">
+  <p>
     <%= f.label :name %><br>
-    <%= f.text_field :name %>
-  </div>
+    <%= f.text_field :name, :size => 40 %>
+  </p>
 
-  <h2>Questions</h2>
-  <%= f.fields_for :questions do |question_fields| %>
-    <%= render "questions", :question => question_fields %>
+  <%= f.fields_for :questions do |builder| %>
+    <%= render "questions", :f => builder %>
   <% end %>
 
-  <div class="actions">
+  <p><%= link_to_add_fields "Add Question", f, :questions %></p>
+
+  <p>
     <%= f.submit %>
-  </div>
+  </p>
 <% end %>

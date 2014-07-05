@@ -3,5 +3,5 @@ class Survey < ActiveRecord::Base
   validates :name, uniqueness: true
   validates :name, presence: true
   
-  accepts_nested_attributes_for :questions
+  accepts_nested_attributes_for :questions, allow_destroy: true
 end
