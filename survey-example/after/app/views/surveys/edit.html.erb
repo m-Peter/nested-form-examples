@@ -1,6 +1,8 @@
-<h1>Editing survey</h1>
+<% title "Edit Survey" %>
 
-<%= render 'form' %>
+<%= render :partial => 'form' %>
 
-<%= link_to 'Show', @survey %> |
-<%= link_to 'Back', surveys_path %>
+<p>
+  <%= link_to "Show", @survey %> |
+  <%= link_to "View All", surveys_path %>
+</p>

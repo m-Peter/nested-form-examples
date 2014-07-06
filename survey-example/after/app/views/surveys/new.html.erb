@@ -1,5 +1,5 @@
-<h1>New survey</h1>
+<% title "New Survey" %>
 
-<%= render 'form' %>
+<%= render :partial => 'form' %>
 
-<%= link_to 'Back', surveys_path %>
+<p><%= link_to "Back to List", surveys_path %></p>

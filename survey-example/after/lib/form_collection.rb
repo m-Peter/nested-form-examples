@@ -14,16 +14,13 @@ class FormCollection
   end
 
   def submit(params)
-    check_record_limit!(records, params)
+    #check_record_limit!(records, params)
 
     params.each do |key, value|
       if parent.persisted?
-        id = value[:id]
-        form = find_form_by_model_id(id)
-        form.submit(value)
+        create_or_update_record(value)
       else
-        i = key.to_i
-        forms[i].submit(value)
+        create_or_assign_record(key, value)
       end
     end
   end
@@ -50,12 +47,64 @@ class FormCollection
 
   private
 
+  UNASSIGNABLE_KEYS = %w( id _destroy )
+
+  def assign_to_or_mark_for_destruction(form, attributes)
+    form.submit(attributes.except(*UNASSIGNABLE_KEYS))
+
+    if has_destroy_flag?(attributes)
+      form.delete
+      remove_form(form)
+    end
+  end
+
+  def existing_record?(attributes)
+    attributes[:id] != nil
+  end
+
+  def update_record(attributes)
+    id = attributes[:id]
+    form = find_form_by_model_id(id)
+    assign_to_or_mark_for_destruction(form, attributes)
+  end
+
+  def create_record(attributes)
+    new_form = create_form
+    new_form.submit(attributes)
+  end
+
+  def create_or_update_record(attributes)
+    if existing_record?(attributes)
+      update_record(attributes)
+    else
+      create_record(attributes)
+    end
+  end
+
+  def create_or_assign_record(key, attributes)
+    i = key.to_i
+
+    if dynamic_key?(i)
+      create_record(attributes)
+    else
+      forms[i].submit(attributes)
+    end
+  end
+
+  def has_destroy_flag?(attributes)
+    attributes['_destroy'] == "1"
+  end
+
   def assign_forms
     if parent.persisted?
       fetch_models
     else
       initialize_models
     end
+  end
+
+  def dynamic_key?(i)
+    i > forms.size
   end
 
   def aggregate_form_errors
@@ -97,5 +146,15 @@ class FormCollection
         return form
       end
     end
+  end
+
+  def remove_form(form)
+    forms.delete(form)
+  end
+
+  def create_form
+    new_form = Form.new(association_name, parent, proc)
+    forms << new_form
+    new_form
   end
 end

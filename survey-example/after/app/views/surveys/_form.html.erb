@@ -11,17 +11,18 @@
     </div>
   <% end %>
 
-  <div class="field">
+  <p>
     <%= f.label :name %><br>
     <%= f.text_field :name, :size => 40 %>
-  </div>
+  </p>
 
-  <h2>Questions</h2>
   <%= f.fields_for :questions, @survey_form.questions do |question_fields| %>
-    <%= render "questions", :question => question_fields %>
+    <%= render "questions", :f => question_fields %>
   <% end %>
 
-  <div class="actions">
+  <p><%= link_to_add_fields "Add Question", f, :questions %></p>
+
+  <p>
     <%= f.submit %>
-  </div>
+  </p>
 <% end %>
