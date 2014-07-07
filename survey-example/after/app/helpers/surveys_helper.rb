@@ -15,7 +15,7 @@ module SurveysHelper
     end
     
     fields = f.fields_for(association, new_object, :child_index => "new_#{ association }") do |builder|
-      render(association.to_s + "_fields", :f => builder)
+      render(association.to_s, :f => builder)
     end
 
     link_to name, '#', onclick: "add_fields(this, \"#{ association }\", \"#{ escape_javascript(fields) }\"); return false;"
