@@ -8,11 +8,7 @@ module SurveysHelper
   end
 
   def link_to_add_fields(name, f, association, options = {})
-    if f.object.respond_to?(:model)
-      new_object = f.object.model.class.reflect_on_association(association).klass.new
-    else
-      new_object = f.object.class.reflect_on_association(association).klass.new
-    end
+    new_object = f.object.get_model(association)
     
     fields = f.fields_for(association, new_object, :child_index => "new_#{ association }") do |builder|
       render(association.to_s, :f => builder)

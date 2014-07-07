@@ -1,16 +1,21 @@
 class Form
   include ActiveModel::Validations
 
-  attr_reader :association_name, :parent, :model, :forms
+  attr_reader :association_name, :parent, :model, :forms, :proc
 
   def initialize(assoc_name, parent, proc, model=nil)
     @association_name = assoc_name
     @parent = parent
     @model = assign_model(model)
     @forms = []
+    @proc = proc
     class_eval &proc
     enable_autosave
     populate_forms
+  end
+
+  def get_model(assoc_name)
+    Form.new(association_name, parent, proc)
   end
 
   def submit(params)

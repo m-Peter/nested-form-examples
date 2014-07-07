@@ -8,6 +8,11 @@ class AbstractForm
     @forms = []
     populate_forms
   end
+
+  def get_model(assoc_name)
+    form = find_form_by_assoc_name(assoc_name)
+    form.get_model(assoc_name)
+  end
   
   def submit(params)
     params.each do |key, value|

@@ -16,9 +16,11 @@
     <%= f.text_field :name, :size => 40 %>
   </p>
 
-  <%= f.fields_for :questions, @survey_form.questions do |question_fields| %>
+  <%= f.fields_for :questions do |question_fields| %>
     <%= render "questions", :f => question_fields %>
   <% end %>
+
+  <p><%= link_to_add_fields "Add Question", f, :questions %></p>
 
   <p>
     <%= f.submit %>
