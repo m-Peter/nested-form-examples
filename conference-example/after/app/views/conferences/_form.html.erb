@@ -22,7 +22,7 @@
   </div>
 
   <h2>Speaker Details</h2>
-  <%= f.fields_for :speaker, @conference_form.speaker do |speaker_fields| %>
+  <%= f.fields_for :speaker do |speaker_fields| %>
     <%= render "speaker", :speaker => speaker_fields %>
   <% end %>
 

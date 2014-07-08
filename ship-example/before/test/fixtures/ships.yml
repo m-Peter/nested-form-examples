@@ -1,15 +1,8 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  name: MyString
+  name: RZ-1 A-Wing
   crew: 1
   has_astromech: false
-  speed: 1
-  armament: MyText
-
-two:
-  name: MyString
-  crew: 1
-  has_astromech: false
-  speed: 1
-  armament: MyText
+  speed: 125
+  armament: 2 laser cannons, concussion missiles

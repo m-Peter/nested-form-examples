@@ -23,7 +23,7 @@
 
   <h2>Artist Details</h2>
 
-  <%= f.fields_for :artist, @song_form.artist do |artist_fields| %>
+  <%= f.fields_for :artist do |artist_fields| %>
     <%= render "artist", :artist => artist_fields %>
   <% end %>
   

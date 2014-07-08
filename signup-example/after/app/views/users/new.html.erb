@@ -39,7 +39,7 @@
 
   <h3>Profile Details</h3>
 
-  <%= f.fields_for :profile, @signup_form.profile do |profile_fields| %>
+  <%= f.fields_for :profile do |profile_fields| %>
     <div class="field">
       <%= profile_fields.label :twitter_name %><br />
       <%= profile_fields.text_field :twitter_name %>

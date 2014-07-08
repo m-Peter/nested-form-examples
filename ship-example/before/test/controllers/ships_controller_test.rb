@@ -18,10 +18,16 @@ class ShipsControllerTest < ActionController::TestCase
 
   test "should create ship" do
     assert_difference('Ship.count') do
-      post :create, ship: { armament: @ship.armament, crew: @ship.crew, has_astromech: @ship.has_astromech, name: @ship.name, speed: @ship.speed }
+      post :create, ship: {
+        armament: "4 laser cannons, proton torpedoes",
+        crew: 1,
+        has_astromech: true,
+        name: "T-65 X-Wing",
+        speed: 100
+      }
     end
 
-    assert_redirected_to ship_path(assigns(:ship))
+    assert_redirected_to ships_path
   end
 
   test "should show ship" do
@@ -36,7 +42,7 @@ class ShipsControllerTest < ActionController::TestCase
 
   test "should update ship" do
     patch :update, id: @ship, ship: { armament: @ship.armament, crew: @ship.crew, has_astromech: @ship.has_astromech, name: @ship.name, speed: @ship.speed }
-    assert_redirected_to ship_path(assigns(:ship))
+    assert_redirected_to ships_path
   end
 
   test "should destroy ship" do

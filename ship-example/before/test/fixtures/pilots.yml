@@ -4,10 +4,4 @@ one:
   first_name: MyString
   last_name: MyString
   call_sign: MyString
-  ship_id: 
-
-two:
-  first_name: MyString
-  last_name: MyString
-  call_sign: MyString
-  ship_id: 
+  ship: one

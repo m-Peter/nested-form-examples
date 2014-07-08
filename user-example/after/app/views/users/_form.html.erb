@@ -29,12 +29,12 @@
   </div>
 
   <h2>Email details</h2>
-  <%= f.fields_for :email, @user_form.email do |email_fields| %>
+  <%= f.fields_for :email do |email_fields| %>
     <%= render "email", :email => email_fields %>
   <% end %>
 
   <h2>Profile details</h2>
-  <%= f.fields_for :profile, @user_form.profile do |profile_fields| %>
+  <%= f.fields_for :profile do |profile_fields| %>
     <% render "profile", :profile => profile_fields %>
   <% end %>
   

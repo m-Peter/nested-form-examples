@@ -9,6 +9,6 @@
 </div>
 
 <h2>Presentantions Details</h2>
-<%= speaker.fields_for :presentations, @conference_form.speaker.presentations do |presentations_fields| %>
+<%= speaker.fields_for :presentations do |presentations_fields| %>
   <%= render "presentations", :presentation => presentations_fields %>
 <% end %>
