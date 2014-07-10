@@ -8,11 +8,6 @@ class AbstractForm
     @forms = []
     populate_forms
   end
-
-  def get_model(assoc_name)
-    form = find_form_by_assoc_name(assoc_name)
-    form.get_model(assoc_name)
-  end
   
   def submit(params)
     params.each do |key, value|
@@ -22,6 +17,11 @@ class AbstractForm
         send("#{key}=", value)
       end
     end
+  end
+
+  def get_model(assoc_name)
+    form = find_form_by_assoc_name(assoc_name)
+    form.get_model(assoc_name)
   end
 
   def save
@@ -76,19 +76,19 @@ class AbstractForm
 
     def association(name, options={}, &block)
       if is_plural?(name)
-        collection(name, options, &block)
+        declare_form_collection(name, options, &block)
       else  
-        form(name, &block)
+        declare_form(name, &block)
       end
     end
 
-    def collection(name, options={}, &block)
+    def declare_form_collection(name, options={}, &block)
       forms << FormDefinition.new({assoc_name: name, records: options[:records], proc: block})
       self.class_eval("def #{name}; @#{name}.models; end")
       define_method("#{name}_attributes=") {}
     end
 
-    def form(name, &block)
+    def declare_form(name, &block)
       forms << FormDefinition.new({assoc_name: name, proc: block})
       attr_reader name
       define_method("#{name}_attributes=") {}
@@ -146,8 +146,8 @@ class AbstractForm
     end
   end
 
-  def collect_errors_from(model)
-    model.errors.each do |attribute, error|
+  def collect_errors_from(validatable_object)
+    validatable_object.errors.each do |attribute, error|
       errors.add(attribute, error)
     end
   end

@@ -14,10 +14,6 @@ class Form
     populate_forms
   end
 
-  def get_model(assoc_name)
-    Form.new(association_name, parent, proc)
-  end
-
   def submit(params)
     params.each do |key, value|
       if nested_params?(value)
@@ -25,6 +21,14 @@ class Form
       else
         model.send("#{key}=", value)
       end
+    end
+  end
+
+  def get_model(assoc_name)
+    if form = find_form_by_assoc_name(assoc_name)
+      form.get_model(assoc_name)
+    else  
+      Form.new(association_name, parent, proc)
     end
   end
 

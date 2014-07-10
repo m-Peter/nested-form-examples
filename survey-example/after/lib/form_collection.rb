@@ -13,10 +13,6 @@ class FormCollection
     assign_forms
   end
 
-  def get_model(assoc_name)
-    Form.new(association_name, parent, proc)
-  end
-
   def submit(params)
     #check_record_limit!(records, params)
 
@@ -27,6 +23,10 @@ class FormCollection
         create_or_assign_record(key, value)
       end
     end
+  end
+
+  def get_model(assoc_name)
+    Form.new(association_name, parent, proc)
   end
 
   def valid?
