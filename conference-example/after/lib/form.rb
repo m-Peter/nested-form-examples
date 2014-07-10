@@ -1,14 +1,15 @@
 class Form
   include ActiveModel::Validations
 
-  attr_reader :association_name, :parent, :model, :forms
+  attr_reader :association_name, :parent, :model, :forms, :proc
 
   def initialize(assoc_name, parent, proc, model=nil)
     @association_name = assoc_name
     @parent = parent
     @model = assign_model(model)
     @forms = []
-    self.class_eval &proc
+    @proc = proc
+    class_eval &proc
     enable_autosave
     populate_forms
   end
@@ -23,6 +24,18 @@ class Form
     end
   end
 
+  def get_model(assoc_name)
+    if form = find_form_by_assoc_name(assoc_name)
+      form.get_model(assoc_name)
+    else  
+      Form.new(association_name, parent, proc)
+    end
+  end
+
+  def delete
+    model.mark_for_destruction
+  end
+
   def valid?
     super
     model.valid?
@@ -35,6 +48,10 @@ class Form
 
   def id
     model.id
+  end
+
+  def _destroy
+    model.marked_for_destruction?
   end
 
   def persisted?
@@ -59,20 +76,20 @@ class Form
 
     def association(name, options={}, &block)
       if is_plural?(name)
-        collection(name, options, &block)
+        declare_form_collection(name, options, &block)
       else  
-        form(name, &block)
+        declare_form(name, &block)
       end
     end
 
-    def collection(name, options={}, &block)
+    def declare_form_collection(name, options={}, &block)
       Form.instance_variable_set(:@forms, forms)
       Form.forms << FormDefinition.new({assoc_name: name, records: options[:records], proc: block})
       self.class_eval("def #{name}; @#{name}.models; end")
       define_method("#{name}_attributes=") {}
     end
 
-    def form(name, &block)
+    def declare_form(name, &block)
       Form.instance_variable_set(:@forms, forms)
       Form.forms << FormDefinition.new({assoc_name: name, proc: block})
       attr_reader name
@@ -170,8 +187,8 @@ class Form
     end
   end
 
-  def collect_errors_from(model)
-    model.errors.each do |attribute, error|
+  def collect_errors_from(validatable_object)
+    validatable_object.errors.each do |attribute, error|
       errors.add(attribute, error)
     end
   end
