@@ -1,4 +1,7 @@
-<div class="field">
-  <%= task.label :task %><br>
-  <%= task.text_field :name %>
+<div class="nested-fields">
+  <div class="field">
+    <%= f.label :task %><br>
+    <%= f.text_field :name %>
+    <%= link_to_remove_fields("Delete", f) %>
+  </div>
 </div>
