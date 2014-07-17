@@ -1,17 +1,11 @@
 class SurveyForm < AbstractForm
-  attribute :name
+  attribute :name, required: true
 
   association :questions, records: 1 do
-    attribute :content
+    attribute :content, required: true
 
     association :answers, records: 2 do
-      attribute :content
-
-      validates :content, presence: true
+      attribute :content, required: true
     end
-
-    validates :content, presence: true
   end
-
-  validates :name, presence: true
 end
