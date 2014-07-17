@@ -1,17 +1,11 @@
 class SongForm < AbstractForm
-  attributes :title, :length
+  attributes :title, :length, required: true
 
   association :artist do
-    attribute :name
+    attribute :name, required: true
 
     association :producer do
-      attributes :name, :studio
-
-      validates :name, :studio, presence: true
+      attributes :name, :studio, required: true
     end
-
-    validates :name, presence: true
   end
-
-  validates :title, :length, presence: true
 end
