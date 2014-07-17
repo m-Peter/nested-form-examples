@@ -1,5 +1,6 @@
 class SignupForm < AbstractForm
-  attributes :username, :email, :password, :password_confirmation
+  attributes :email, :password, :password_confirmation
+  attributes :username, required: true
 
   association :profile do
     attributes :twitter_name, :github_name, :bio
