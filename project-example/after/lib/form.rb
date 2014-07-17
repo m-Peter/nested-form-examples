@@ -66,6 +66,12 @@ class Form
     attr_reader :forms
 
     def attributes(*names)
+      options = names.pop if names.last.is_a?(Hash)
+
+      if options && options[:required]
+        validates_presence_of *names
+      end
+      
       names.each do |attribute|
         delegate attribute, to: :model
         delegate "#{attribute}=", to: :model

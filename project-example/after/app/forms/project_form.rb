@@ -1,11 +1,7 @@
 class ProjectForm < AbstractForm
-  attribute :name
+  attribute :name, required: true
 
   association :tasks, records: 3 do
-    attribute :name
-
-    validates :name, presence: true
+    attribute :name, required: true
   end
-
-  validates :name, presence: true
 end
