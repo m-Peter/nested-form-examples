@@ -11,8 +11,8 @@ SimpleForm.setup do |config|
 
     b.wrapper tag: "div", class: "input" do |ba|
       ba.use :input
-      ba.use :error, tag: :span, class: :'help-inline'
-      ba.use :hint,  tag: :span, class: :'help-block'
+      ba.use :error, wrap_with: { tag: 'span', class: 'help-inline' }
+      ba.use :hint,  wrap_with: { tag: 'p', class: 'help-block' }
     end
   end
 
@@ -20,9 +20,10 @@ SimpleForm.setup do |config|
     b.use :placeholder
     b.use :label
     b.use :hint,  tag: :span, class: :'help-block'
-    b.use tag: "div", class: "input" do |input|
+
+    b.wrapper tag: "div", class: "input" do |input|
       input.use :input
-      input.use :error, tag: :span, class: :'help-inline'
+      input.use :error, wrap_with: { tag: :span, class: 'help-inline' }
     end
   end
 
@@ -30,11 +31,12 @@ SimpleForm.setup do |config|
     b.use :placeholder
     b.use :label
     b.use :hint,  tag: :span, class: :'help-block'
-    b.use tag: 'div', class: 'input' do |input|
-      input.use tag: 'div', class: 'input-prepend' do |prepend|
+
+    b.wrapper tag: "div", class: "input" do |input|
+      input.wrapper tag: "div", class: "input-prepend" do |prepend|
         prepend.use :input
       end
-      input.use :error, tag: :span, class: :'help-inline'
+      input.use :error, wrap_with: { tag: :span, class: 'help-inline' }
     end
   end
 
@@ -42,11 +44,12 @@ SimpleForm.setup do |config|
     b.use :placeholder
     b.use :label
     b.use :hint,  tag: :span, class: :'help-block'
-    b.use tag: 'div', class: 'input' do |input|
-      input.use tag: 'div', class: 'input-append' do |append|
+
+    b.wrapper tag: "div", class: "input" do |input|
+      input.wrapper tag: "div", class: "input-append" do |append|
         append.use :input
       end
-      input.use :error, tag: :span, class: :'help-inline'
+      input.use :error, wrap_with: { tag: :span, class: 'help-inline' }
     end
   end
 
@@ -75,7 +78,7 @@ SimpleForm.setup do |config|
   # config.collection_value_methods = [ :id, :to_s ]
 
   # How the label text should be generated altogether with the required text.
-  config.label_text = proc { |label, required| "#{label} #{required}" }
+  config.label_text = lambda { |label, required| "#{label} #{required}" }
 
   # You can define the class to use on all labels. Default is nil.
   # config.label_class = nil

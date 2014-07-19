@@ -13,7 +13,5 @@
 //= require jquery
 //= require jquery_ujs
 //= require cocoon
-//= require projects
-//= require bootstrap-tabs
 //= require turbolinks
 //= require_tree .
