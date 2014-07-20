@@ -176,4 +176,53 @@ class ProjectFormTest < ActiveSupport::TestCase
     
     assert_equal 2, form.tasks.size
   end
+
+  test "project form responds to owner_id attribute" do
+    attributes = [:owner_id, :owner_id=]
+
+    attributes.each do |attribute|
+      assert_respond_to @form, attribute
+    end
+  end
+
+  test "assign owner to new project" do
+    peter = Person.create(name: "Peter Markou", role: "Contributor", description: "not now please")
+    params = {
+      name: "Add Form Models",
+      description: "Nested models in a single form",
+      owner_id: peter.id
+    }
+
+    @form.submit(params)
+
+    assert_equal 0, @form.errors.size
+    assert_difference('Project.count') do
+      @form.save
+    end
+
+    assert_equal "Add Form Models", @form.name
+    assert_equal "Nested models in a single form", @form.description
+    assert_equal peter, @form.model.owner
+  end
+
+  test "assign owner to existing project" do
+    project = projects(:yard)
+    peter = Person.create(name: "Peter Markou", role: "Contributor", description: "not now please")
+    form = ProjectFormFixture.new(project)
+    params = {
+      owner_id: peter.id,
+    }
+
+    form.submit(params)
+
+    assert_difference('Project.count', 0) do
+      form.save
+    end
+
+    assert_equal peter, form.model.owner
+  end
+
+  test "project form responds to tasks writer method" do
+    assert_respond_to @form, :tasks_attributes=
+  end
 end

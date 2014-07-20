@@ -1,8 +1,7 @@
 class ProjectFormFixture < AbstractForm
-  attributes :name, :description, required: true
+  attributes :name, :description, :owner_id
 
   association :tasks, records: 2 do
-    attributes :name, :description, required: true
-    attribute :done
+    attributes :name, :description, :done
   end
 end
