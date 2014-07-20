@@ -3,3 +3,7 @@
 rake:
   name: rake the leaves
   project: yard
+
+paint:
+  name: paint the fence
+  project: yard
