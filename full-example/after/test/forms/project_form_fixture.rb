@@ -4,4 +4,8 @@ class ProjectFormFixture < AbstractForm
   association :tasks, records: 2 do
     attributes :name, :description, :done
   end
+
+  association :contributors, records: 2 do
+    attributes :name, :description, :role
+  end
 end

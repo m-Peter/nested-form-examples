@@ -7,7 +7,8 @@ class ProjectFormTest < ActiveSupport::TestCase
   def setup
     @project = Project.new
     @form = ProjectFormFixture.new(@project)
-    @tasks_form = @form.forms.first
+    @tasks_form = @form.forms[0]
+    @contributors_form = @form.forms[1]
     @model = @form
   end
 
@@ -23,16 +24,22 @@ class ProjectFormTest < ActiveSupport::TestCase
     assert_respond_to ProjectFormFixture, :association
   end
 
-  test "forms list contains tasks sub-form definition" do
-    assert_equal 1, ProjectFormFixture.forms.size
+  test "forms list contains sub-form definitions" do
+    assert_equal 2, ProjectFormFixture.forms.size
 
     tasks_definition = ProjectFormFixture.forms[0]
+    contributors_definition = ProjectFormFixture.forms[1]
 
     assert_equal :tasks, tasks_definition.assoc_name
+    assert_equal :contributors, contributors_definition.assoc_name
   end
 
   test "project form provides getter method for tasks sub-form" do
     assert_instance_of FormCollection, @tasks_form
+  end
+
+  test "project form provides getter method for contributors sub-form" do
+    assert_instance_of FormCollection, @contributors_form
   end
 
   test "tasks sub-form contains association name and parent" do
@@ -41,9 +48,18 @@ class ProjectFormTest < ActiveSupport::TestCase
     assert_equal @project, @tasks_form.parent
   end
 
+  test "contributors sub-form contains association name and parent" do
+    assert_equal :contributors, @contributors_form.association_name
+    assert_equal 2, @contributors_form.records
+    assert_equal @project, @contributors_form.parent
+  end
+
   test "#represents? returns true if the argument matches the Form's association name, false otherwise" do
     assert @tasks_form.represents?("tasks")
     assert_not @tasks_form.represents?("task")
+
+    assert @contributors_form.represents?("contributors")
+    assert_not @contributors_form.represents?("contributor")
   end
 
   test "project form provides getter method for task objects" do
@@ -57,7 +73,18 @@ class ProjectFormTest < ActiveSupport::TestCase
     end
   end
 
-  test "project form initializes the number of records specified" do
+  test "project form provides getter method for contributor objects" do
+    assert_respond_to @form, :contributors
+
+    contributors = @form.contributors
+
+    contributors.each do |form|
+      assert_instance_of Form, form
+      assert_instance_of Person, form.model
+    end
+  end
+
+  test "project form initializes the number of records specified for tasks" do
     assert_respond_to @tasks_form, :models
     assert_equal 2, @tasks_form.models.size
     
@@ -77,7 +104,27 @@ class ProjectFormTest < ActiveSupport::TestCase
     assert_equal 2, @form.model.tasks.size
   end
 
-  test "project form fetches models for existing parent" do
+  test "project form initializes the number of records specified for contributors" do
+    assert_respond_to @contributors_form, :models
+    assert_equal 2, @contributors_form.models.size
+
+    @contributors_form.each do |form|
+      assert_instance_of Form, form
+      assert_instance_of Person, form.model
+      assert form.model.new_record?
+
+      assert_respond_to form, :name
+      assert_respond_to form, :name=
+      assert_respond_to form, :role
+      assert_respond_to form, :role=
+      assert_respond_to form, :description
+      assert_respond_to form, :description=
+    end
+
+    assert_equal 2, @form.model.tasks.size
+  end
+
+  test "project form fetches task objects for existing Project" do
     project = projects(:yard)
 
     form = ProjectFormFixture.new(project)
@@ -88,7 +135,19 @@ class ProjectFormTest < ActiveSupport::TestCase
     assert_equal project.tasks[1], form.tasks[1].model
   end
 
-  test "project form syncs its model and the models in nested sub-forms" do
+  test "project form fetches contributor objects for existing Project" do
+    project = projects(:gsoc)
+
+    form = ProjectFormFixture.new(project)
+
+    assert_equal project.name, "Add Form Models"
+    assert_equal project.description, "Nesting models in a single form"
+    assert_equal 2, form.contributors.size
+    assert_equal project.contributors[0], form.contributors[0].model
+    assert_equal project.contributors[1], form.contributors[1].model
+  end
+
+  test "project form syncs its model and its tasks" do
     params = {
       name: "Add Form Models",
 
@@ -113,7 +172,34 @@ class ProjectFormTest < ActiveSupport::TestCase
     assert_equal 2, @form.tasks.size
   end
 
-  test "project form saves its model and the models in nested sub-forms" do
+  test "project form syncs its model and its contributors" do
+    params = {
+      name: "Add Form Models",
+      description: "Nesting models in a single form",
+
+      contributors_attributes: {
+        "0" => { name: "Peter Markou", role: "GSoC Student", description: "Working on adding Form Models" },
+        "1" => { name: "Carlos Silva", role: "RoR Core Member", description: "Assisting Peter throughout GSoC" }
+      }
+    }
+
+    @form.submit(params)
+
+    assert_equal "Add Form Models", @form.name
+    assert_equal "Nesting models in a single form", @form.description
+
+    assert_equal "Peter Markou", @form.contributors[0].name
+    assert_equal "GSoC Student", @form.contributors[0].role
+    assert_equal "Working on adding Form Models", @form.contributors[0].description
+
+    assert_equal "Carlos Silva", @form.contributors[1].name
+    assert_equal "RoR Core Member", @form.contributors[1].role
+    assert_equal "Assisting Peter throughout GSoC", @form.contributors[1].description
+
+    assert_equal 2, @form.contributors.size
+  end
+
+  test "project form saves its model and its tasks" do
     params = {
       name: "Add Form Models",
       description: "Nested models in a single form",
@@ -149,7 +235,43 @@ class ProjectFormTest < ActiveSupport::TestCase
     end
   end
 
-  test "project form updates its model and the models in nested sub-forms" do
+  test "project form saves its model and its contributors" do
+    params = {
+      name: "Add Form Models",
+      description: "Nesting models in a single form",
+
+      contributors_attributes: {
+        "0" => { name: "Peter Markou", role: "GSoC Student", description: "Working on adding Form Models" },
+        "1" => { name: "Carlos Silva", role: "RoR Core Member", description: "Assisting Peter throughout GSoC" }
+      }
+    }
+
+    @form.submit(params)
+
+    assert_difference('Project.count') do
+      @form.save
+    end
+
+    assert_equal "Add Form Models", @form.name
+    assert_equal "Nesting models in a single form", @form.description
+
+    assert_equal "Peter Markou", @form.contributors[0].name
+    assert_equal "GSoC Student", @form.contributors[0].role
+    assert_equal "Working on adding Form Models", @form.contributors[0].description
+
+    assert_equal "Carlos Silva", @form.contributors[1].name
+    assert_equal "RoR Core Member", @form.contributors[1].role
+    assert_equal "Assisting Peter throughout GSoC", @form.contributors[1].description
+
+    assert_equal 2, @form.contributors.size
+
+    assert @form.persisted?
+    @form.contributors.each do |contributor_form|
+      assert contributor_form.persisted?
+    end
+  end
+
+  test "project form updates its model and its tasks" do
     project = projects(:yard)
     form = ProjectFormFixture.new(project)
     params = {
@@ -175,6 +297,39 @@ class ProjectFormTest < ActiveSupport::TestCase
     assert_equal true, form.tasks[1].done
     
     assert_equal 2, form.tasks.size
+  end
+
+  test "project form updates its model and its contributors" do
+    project = projects(:gsoc)
+    form = ProjectFormFixture.new(project)
+    params = {
+      name: "Add Form Models",
+      description: "Nesting models in a single form",
+
+      contributors_attributes: {
+        "0" => { role: "CS Student", id: people(:peter).id },
+        "1" => { role: "Plataformatec Engineer", id: people(:carlos).id }
+      }
+    }
+
+    form.submit(params)
+
+    assert_difference('Project.count', 0) do
+      form.save
+    end
+
+    assert_equal "Add Form Models", form.name
+    assert_equal "Nesting models in a single form", form.description
+
+    assert_equal "Peter Markou", form.contributors[0].name
+    assert_equal "CS Student", form.contributors[0].role
+    assert_equal "Working on adding Form Models", form.contributors[0].description
+
+    assert_equal "Carlos Silva", form.contributors[1].name
+    assert_equal "Plataformatec Engineer", form.contributors[1].role
+    assert_equal "Assisting Peter throughout GSoC", form.contributors[1].description
+
+    assert_equal 2, form.contributors.size
   end
 
   test "project form responds to owner_id attribute" do
@@ -224,5 +379,9 @@ class ProjectFormTest < ActiveSupport::TestCase
 
   test "project form responds to tasks writer method" do
     assert_respond_to @form, :tasks_attributes=
+  end
+
+  test "project form responds to contributors writer method" do
+    assert_respond_to @form, :contributors_attributes=
   end
 end

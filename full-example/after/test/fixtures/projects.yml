@@ -2,3 +2,7 @@
 
 yard:
   name: Yard Work
+
+gsoc:
+  name: Add Form Models
+  description: Nesting models in a single form
