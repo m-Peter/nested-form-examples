@@ -15,24 +15,27 @@ class ProjectsController < ApplicationController
   # GET /projects/new
   def new
     @project = Project.new
+    @project_form = ProjectForm.new(@project)
   end
 
   # GET /projects/1/edit
   def edit
+    @project_form = ProjectForm.new(@project)
   end
 
   # POST /projects
   # POST /projects.json
   def create
-    @project = Project.new(project_params)
+    @project = Project.new
+    @project_form = ProjectForm.new(@project)
+
+    @project_form.submit(project_params)
 
     respond_to do |format|
-      if @project.save
-        format.html { redirect_to @project, notice: 'Project was successfully created.' }
-        format.json { render :show, status: :created, location: @project }
+      if @project_form.save
+        format.html { redirect_to @project_form, notice: 'Project was successfully created.' }
       else
         format.html { render :new }
-        format.json { render json: @project.errors, status: :unprocessable_entity }
       end
     end
   end
@@ -40,13 +43,15 @@ class ProjectsController < ApplicationController
   # PATCH/PUT /projects/1
   # PATCH/PUT /projects/1.json
   def update
+    @project_form = ProjectForm.new(@project)
+
+    @project_form.submit(project_params)
+
     respond_to do |format|
-      if @project.update(project_params)
-        format.html { redirect_to @project, notice: 'Project was successfully updated.' }
-        format.json { render :show, status: :ok, location: @project }
+      if @project_form.save
+        format.html { redirect_to @project_form, notice: 'Project was successfully updated.' }
       else
         format.html { render :edit }
-        format.json { render json: @project.errors, status: :unprocessable_entity }
       end
     end
   end
@@ -57,7 +62,6 @@ class ProjectsController < ApplicationController
     @project.destroy
     respond_to do |format|
       format.html { redirect_to projects_url, notice: 'Project was successfully destroyed.' }
-      format.json { head :no_content }
     end
   end
 
@@ -69,6 +73,9 @@ class ProjectsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def project_params
-      params.require(:project).permit(:name, :description)
+      params.require(:project).permit(:name, :owner_id, tasks_attributes: [ :name, :description, :done, :id, :_destroy,
+      sub_tasks_attributes: [ :name, :description, :done, :id, :_destroy ] ],
+        contributors_attributes: [ :name, :role, :description, :id, :_destroy ], project_tags_attributes:
+        [ :tag_id, :id, :_destroy, tag_attributes: [ :name, :id, :_destroy ] ])
     end
 end

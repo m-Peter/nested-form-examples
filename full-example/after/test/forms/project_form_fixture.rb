@@ -12,4 +12,8 @@ class ProjectFormFixture < AbstractForm
   association :tags, records: 2 do
     attribute :name
   end
+
+  association :owner do
+    attributes :name, :description, :role
+  end
 end

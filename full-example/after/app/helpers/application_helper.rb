@@ -1,5 +1,21 @@
 module ApplicationHelper
 
+  def link_to_remove_fields(name, f, options = {})
+    html_options = {}
+    is_existing = f.object.persisted?
+    
+    classes = []
+    classes << "remove_fields"
+    classes << (is_existing ? 'existing' : 'dynamic')
+    html_options[:class] = [classes.join(' ')]
+
+    if is_existing
+      f.hidden_field(:_destroy) + link_to(name, '#', html_options)
+    else
+      link_to(name, '#', html_options)
+    end
+  end
+
   # this will show a link to remove the current association. This should be placed inside the partial.
   # either you give
   # - *name* : the text of the link
@@ -21,19 +37,23 @@ module ApplicationHelper
       f            = args[1]
       html_options = args[2] || {}
 
-      puts "Object: #{f}"
-      is_dynamic = f.object.new_record?
+      is_existing = f.object.persisted?
 
       classes = []
       classes << "remove_fields"
-      classes << (is_dynamic ? 'dynamic' : 'existing')
-      classes << 'destroyed' if f.object.marked_for_destruction?
+      classes << (is_existing ? 'existing' : 'dynamic')
+      #classes << 'destroyed' if f.object.marked_for_destruction?
       html_options[:class] = [html_options[:class], classes.join(' ')].compact.join(' ')
 
       wrapper_class = html_options.delete(:wrapper_class)
       html_options[:'data-wrapper-class'] = wrapper_class if wrapper_class.present?
 
-      hidden_field_tag("#{f.object_name}[_destroy]", f.object._destroy) + link_to(name, '#', html_options)
+      #hidden_field_tag("#{f.object_name}[_destroy]", f.object._destroy) + link_to(name, '#', html_options)
+      if is_existing
+        f.hidden_field(:_destroy) + link_to(name, '#', html_options)
+      else
+        link_to(name, '#', html_options)
+      end 
     end
   end
 
@@ -87,13 +107,14 @@ module ApplicationHelper
       html_options[:'data-association'] = association.to_s.singularize
       html_options[:'data-associations'] = association.to_s.pluralize
 
-      new_object = create_object(f, association, force_non_association_create)
+      #new_object = create_object(f, association, force_non_association_create)
+      new_object = f.object.get_model(association)
       new_object = wrap_object.call(new_object) if wrap_object.respond_to?(:call)
 
       html_options[:'data-association-insertion-template'] = CGI.escapeHTML(render_association(association, f, new_object, form_parameter_name, render_options, override_partial).to_str).html_safe
 
       html_options[:'data-count'] = count if count > 0
-
+      
       link_to(name, '#', html_options)
     end
   end
@@ -102,9 +123,10 @@ module ApplicationHelper
   # `` has_many :admin_comments, class_name: "Comment", conditions: { author: "Admin" }
   # will create new Comment with author "Admin"
   def create_object(f, association, force_non_association_create=false)
-    assoc = f.object.class.reflect_on_association(association)
+    #assoc = f.object.class.reflect_on_association(association)
 
-    assoc ? create_object_on_association(f, association, assoc, force_non_association_create) : create_object_on_non_association(f, association)
+    #assoc ? create_object_on_association(f, association, assoc, force_non_association_create) : create_object_on_non_association(f, association)
+    f.object.get_model(association)
   end
 
   def get_partial_path(partial, association)

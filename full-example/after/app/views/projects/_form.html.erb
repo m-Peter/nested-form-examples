@@ -1,4 +1,4 @@
-<%= simple_form_for @project, wrapper: 'inline' do |f| %>
+<%= simple_form_for @project_form, wrapper: 'inline' do |f| %>
   <%= f.input :name, :hint => 'The title of your project' %>
 
   <ul class="nav nav-tabs tabs">
@@ -30,11 +30,11 @@
     </div>
 
     <div id="people">
-      <%= f.simple_fields_for :people, wrapper: 'inline' do |person| %>
-        <%= render 'person_fields', :f => person %>
+      <%= f.simple_fields_for :contributors, wrapper: 'inline' do |person| %>
+        <%= render 'contributor_fields', :f => person %>
       <% end %>
       <div class="links">
-        <%= link_to_add_association 'add person', f, :people, :render_options => { :wrapper => 'inline' } %>
+        <%= link_to_add_association 'add person', f, :contributors, :render_options => { :wrapper => 'inline' } %>
       </div>
     </div>
 

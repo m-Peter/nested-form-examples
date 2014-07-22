@@ -38,11 +38,11 @@
 <h3>People</h3>
 
 <table>
-  <% @project.people.each do |person| %>
+  <% @project.contributors.each do |contributor| %>
     <tr>
-      <td><%= person.name %></td>
-      <td><%= person.role %></td>
-      <td><%= person.description %></td>
+      <td><%= contributor.name %></td>
+      <td><%= contributor.role %></td>
+      <td><%= contributor.description %></td>
     </tr>
   <% end %>
 </table>

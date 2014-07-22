@@ -10,6 +10,7 @@ class ProjectFormTest < ActiveSupport::TestCase
     @tasks_form = @form.forms[0]
     @contributors_form = @form.forms[1]
     @tags_form = @form.forms[2]
+    @owner_form = @form.forms[3]
     @model = @form
   end
 
@@ -26,15 +27,17 @@ class ProjectFormTest < ActiveSupport::TestCase
   end
 
   test "forms list contains sub-form definitions" do
-    assert_equal 3, ProjectFormFixture.forms.size
+    assert_equal 4, ProjectFormFixture.forms.size
 
     tasks_definition = ProjectFormFixture.forms[0]
     contributors_definition = ProjectFormFixture.forms[1]
     tags_definition = ProjectFormFixture.forms[2]
+    owner_definition = ProjectFormFixture.forms[3]
 
     assert_equal :tasks, tasks_definition.assoc_name
     assert_equal :contributors, contributors_definition.assoc_name
     assert_equal :tags, tags_definition.assoc_name
+    assert_equal :owner, owner_definition.assoc_name
   end
 
   test "project form provides getter method for tasks sub-form" do
@@ -47,6 +50,10 @@ class ProjectFormTest < ActiveSupport::TestCase
 
   test "project form provides getter method for tags sub-form" do
     assert_instance_of FormCollection, @tags_form
+  end
+
+  test "project form provides getter method for owner sub-form" do
+    assert_instance_of Form, @owner_form
   end
 
   test "tasks sub-form contains association name and parent" do
@@ -65,6 +72,11 @@ class ProjectFormTest < ActiveSupport::TestCase
     assert_equal :tags, @tags_form.association_name
     assert_equal 2, @contributors_form.records
     assert_equal @project, @tags_form.parent
+  end
+
+  test "owner sub-form contains association name and parent" do
+    assert_equal :owner, @owner_form.association_name
+    assert_equal @project, @owner_form.parent
   end
 
   test "#represents? returns true if the argument matches the Form's association name, false otherwise" do
@@ -477,11 +489,15 @@ class ProjectFormTest < ActiveSupport::TestCase
   end
 
   test "assign owner to new project" do
-    peter = Person.create(name: "Peter Markou", role: "Contributor", description: "not now please")
     params = {
       name: "Add Form Models",
       description: "Nested models in a single form",
-      owner_id: peter.id
+      
+      owner_attributes: {
+        name: "Peter Markou",
+        role: "Contributor",
+        description: "not now please"
+      }
     }
 
     @form.submit(params)
@@ -493,15 +509,20 @@ class ProjectFormTest < ActiveSupport::TestCase
 
     assert_equal "Add Form Models", @form.name
     assert_equal "Nested models in a single form", @form.description
-    assert_equal peter, @form.model.owner
+    assert_equal "Peter Markou", @form.owner.name
+    assert_equal "Contributor", @form.owner.role
+    assert_equal "not now please", @form.owner.description
   end
 
   test "assign owner to existing project" do
     project = projects(:yard)
-    peter = Person.create(name: "Peter Markou", role: "Contributor", description: "not now please")
     form = ProjectFormFixture.new(project)
     params = {
-      owner_id: peter.id,
+      owner_attributes: {
+        name: "Peter Markou",
+        role: "Contributor",
+        description: "not now please"
+      }
     }
 
     form.submit(params)
@@ -510,7 +531,9 @@ class ProjectFormTest < ActiveSupport::TestCase
       form.save
     end
 
-    assert_equal peter, form.model.owner
+    assert_equal "Peter Markou", form.owner.name
+    assert_equal "Contributor", form.owner.role
+    assert_equal "not now please", form.owner.description
   end
 
   test "project form responds to tasks writer method" do
@@ -523,5 +546,9 @@ class ProjectFormTest < ActiveSupport::TestCase
 
   test "project form responds to tags writer method" do
     assert_respond_to @form, :tags_attributes=
+  end
+
+  test "project form responds to owner writer method" do
+    assert_respond_to @form, :owner_attributes=
   end
 end

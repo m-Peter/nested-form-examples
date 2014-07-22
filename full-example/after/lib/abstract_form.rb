@@ -88,6 +88,10 @@ class AbstractForm
       end
     end
 
+    def reflect_on_association(association)
+      Project.reflect_on_association(association)
+    end
+
     def declare_form_collection(name, options={}, &block)
       forms << FormDefinition.new({assoc_name: name, records: options[:records], proc: block})
       self.class_eval("def #{name}; @#{name}.models; end")

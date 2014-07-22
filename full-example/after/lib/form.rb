@@ -25,7 +25,8 @@ class Form
   end
 
   def get_model(assoc_name)
-    if form = find_form_by_assoc_name(assoc_name)
+    form = find_form_by_assoc_name(assoc_name)
+    if form.instance_of?(Form)
       form.get_model(assoc_name)
     else  
       Form.new(association_name, parent, proc)
@@ -161,6 +162,8 @@ class Form
     macro = association_reflection.macro
 
     case macro
+    when :belongs_to
+      fetch_or_initialize_model
     when :has_one
       fetch_or_initialize_model
     when :has_many
@@ -172,9 +175,7 @@ class Form
     if parent.send("#{association_name}")
       model = parent.send("#{association_name}")
     else
-      model_class = association_name.to_s.camelize.constantize
-      model = model_class.new
-      parent.send("#{association_name}=", model)
+      model = parent.send("build_#{association_name}")
     end
   end
 
