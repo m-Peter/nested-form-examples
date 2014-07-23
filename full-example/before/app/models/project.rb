@@ -4,7 +4,7 @@ class Project < ActiveRecord::Base
   belongs_to :owner, :class_name => 'Person', dependent: :destroy
 
   has_many :project_tags, dependent: :destroy
-  has_many :tags, :through => :project_tags, :class_name => 'Tag', dependent: :destroy
+  has_many :tags, :through => :project_tags, dependent: :destroy
 
   accepts_nested_attributes_for :tasks, :reject_if => :all_blank, :allow_destroy => true
   accepts_nested_attributes_for :people, :reject_if => :all_blank, :allow_destroy => true
