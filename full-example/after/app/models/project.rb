@@ -4,5 +4,5 @@ class Project < ActiveRecord::Base
   belongs_to :owner, :class_name => 'Person', dependent: :destroy
 
   has_many :project_tags, dependent: :destroy
-  has_many :tags, :through => :project_tags, :class_name => 'Tag', dependent: :destroy
+  has_many :tags, through: :project_tags, dependent: :destroy
 end

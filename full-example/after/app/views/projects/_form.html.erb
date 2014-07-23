@@ -46,10 +46,10 @@
     </div>
 
     <div id="tags">
-      <%= f.simple_fields_for :project_tags, wrapper: 'inline' do |project_tag| %>
-        <%= render 'project_tag_fields', :f => project_tag %>
+      <%= f.simple_fields_for :tags, wrapper: 'inline' do |project_tag| %>
+        <%= render 'tag_fields', :f => project_tag %>
       <% end %>
-      <%= link_to_add_association 'add a tag', f, :project_tags, :render_options => { :wrapper => 'inline' } %>
+      <%= link_to_add_association 'add a tag', f, :tags, :render_options => { :wrapper => 'inline' } %>
     </div>
   </div>
 

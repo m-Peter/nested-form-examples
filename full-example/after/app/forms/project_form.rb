@@ -13,10 +13,8 @@ class ProjectForm < AbstractForm
     attributes :name, :description, :role
   end
 
-  association :project_tags do
-    association :tag do
-      attribute :name
-    end
+  association :tags do
+    attribute :name
   end
 
   association :owner do
