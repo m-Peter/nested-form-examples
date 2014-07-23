@@ -12,9 +12,7 @@
 //
 //= require jquery
 //= require jquery_ujs
-//= require turbolinks
 //= require_tree .
-
 
 (function($) {
 
@@ -53,7 +51,6 @@
       regexp_braced     = new RegExp('\\[new_' + assocs + '\\](.*?\\s)', 'g');
       regexp_underscord = new RegExp('_new_' + assocs + '_(\\w*)', 'g');
       new_content       = content.replace(regexp_braced, newcontent_braced(new_id));
-      alert("Adding Association: " + assoc + ", with content: " + new_content);
     }
 
     new_content = new_content.replace(regexp_underscord, newcontent_underscord(new_id));
