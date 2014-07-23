@@ -163,7 +163,7 @@ class Form
 
     case macro
     when :belongs_to
-      fetch_or_initialize_model
+      parent.send("build_#{association_name}")
     when :has_one
       fetch_or_initialize_model
     when :has_many
