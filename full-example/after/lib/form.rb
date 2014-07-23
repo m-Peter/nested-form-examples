@@ -89,6 +89,11 @@ class Form
       end
     end
 
+    def reflect_on_association(association)
+      puts "Form: #{self}, Assoc: #{association}"
+      ProjectTag.reflect_on_association(association)
+    end
+
     def declare_form_collection(name, options={}, &block)
       Form.instance_variable_set(:@forms, forms)
       Form.forms << FormDefinition.new({assoc_name: name, records: options[:records], proc: block})
