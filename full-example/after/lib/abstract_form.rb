@@ -89,7 +89,6 @@ class AbstractForm
     end
 
     def reflect_on_association(association)
-      puts "Form: #{self}, Assoc: #{association}"
       Project.reflect_on_association(association)
     end
 

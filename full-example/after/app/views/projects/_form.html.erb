@@ -30,11 +30,11 @@
     </div>
 
     <div id="people">
-      <%= f.simple_fields_for :contributors, wrapper: 'inline' do |person| %>
-        <%= render 'contributor_fields', :f => person %>
+      <%= f.simple_fields_for :contributors, wrapper: 'inline' do |contributor| %>
+        <%= render 'contributor_fields', :f => contributor %>
       <% end %>
       <div class="links">
-        <%= link_to_add_association 'add person', f, :contributors, :render_options => { :wrapper => 'inline' } %>
+        <%= link_to_add_association 'add contributor', f, :contributors, :render_options => { :wrapper => 'inline' } %>
       </div>
     </div>
 

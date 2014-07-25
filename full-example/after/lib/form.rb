@@ -90,7 +90,6 @@ class Form
     end
 
     def reflect_on_association(association)
-      puts "Form: #{self}, Assoc: #{association}"
       ProjectTag.reflect_on_association(association)
     end
 
