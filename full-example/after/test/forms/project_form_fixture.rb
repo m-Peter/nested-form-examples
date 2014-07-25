@@ -8,9 +8,6 @@ class ProjectFormFixture < AbstractForm
   association :contributors, records: 2 do
     attributes :name, :description, :role
   end
-  association :tags, records: 2 do
-    attribute :name
-  end
 
   association :owner do
     attributes :name, :description, :role
