@@ -1,12 +1,24 @@
 class ProjectFormFixture < AbstractForm
   attributes :name, :description, :owner_id
 
-  association :tasks, records: 2 do
+  association :tasks do
     attributes :name, :description, :done
+
+    association :sub_tasks do
+      attributes :name, :description, :done
+    end
   end
 
   association :contributors, records: 2 do
     attributes :name, :description, :role
+  end
+
+  association :project_tags do
+    attribute :tag_id
+    
+    association :tag do
+      attribute :name
+    end
   end
 
   association :owner do

@@ -1,7 +1,7 @@
 class Form
   include ActiveModel::Validations
 
-  attr_reader :association_name, :parent, :model, :forms, :proc
+  attr_reader :association_name, :parent, :model, :forms, :proc, :model_class
 
   def initialize(assoc_name, parent, proc, model=nil)
     @association_name = assoc_name
@@ -9,6 +9,7 @@ class Form
     @model = assign_model(model)
     @forms = []
     @proc = proc
+    @model_class = model.class
     class_eval &proc
     enable_autosave
     populate_forms
@@ -28,7 +29,7 @@ class Form
     form = find_form_by_assoc_name(assoc_name)
     if form.instance_of?(Form)
       form.get_model(assoc_name)
-    else  
+    else
       Form.new(association_name, parent, proc)
     end
   end
@@ -64,6 +65,7 @@ class Form
   end
   
   class << self
+    attr_accessor :model_class
     attr_reader :forms
 
     def attributes(*names)
@@ -156,6 +158,7 @@ class Form
       name = definition.assoc_name
       instance_variable_set("@#{name}", form)
     end
+    self.class.model_class = model.class
   end
 
   def association_reflection
@@ -167,7 +170,6 @@ class Form
 
     case macro
     when :belongs_to
-      #parent.send("build_#{association_name}")
       fetch_or_initialize_model
     when :has_one
       fetch_or_initialize_model
