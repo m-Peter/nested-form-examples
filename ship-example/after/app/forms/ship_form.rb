@@ -1,4 +1,4 @@
-class ShipForm < AbstractForm
+class ShipForm < ActiveForm::Base
   attributes :name, :crew, :speed, :armament, required: true
   attribute :has_astromech
 
