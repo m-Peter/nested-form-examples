@@ -1,4 +1,4 @@
-class ProjectForm < AbstractForm
+class ProjectForm < ActiveForm::Base
   attribute :name, required: true
 
   association :tasks, records: 3 do
