@@ -1,3 +1,10 @@
+GIT
+  remote: git://github.com/m-Peter/activeform.git
+  revision: 71224b9ea6f4cdef0e5174eb38a64c56eedcfef1
+  specs:
+    active_form (0.0.1)
+      rails (~> 4.1.1)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -114,6 +121,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  active_form!
   bcrypt (~> 3.1.7)
   coffee-rails (~> 4.0.0)
   jbuilder (~> 2.0)

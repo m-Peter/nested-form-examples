@@ -1,4 +1,4 @@
-class SignupForm < AbstractForm
+class SignupForm < ActiveForm::Base
   attributes :email, :password, :password_confirmation
   attributes :username, required: true
 
