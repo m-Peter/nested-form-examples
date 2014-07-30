@@ -4,11 +4,11 @@ class FormCollection
 
   attr_reader :association_name, :records, :parent, :proc, :forms
 
-  def initialize(assoc_name, parent, proc, records)
+  def initialize(assoc_name, parent, proc, options)
     @association_name = assoc_name
     @parent = parent
     @proc = proc
-    @records = records
+    @records = options[:records] || 1
     @forms = []
     assign_forms
   end
@@ -23,6 +23,10 @@ class FormCollection
         create_or_assign_record(key, value)
       end
     end
+  end
+
+  def get_model(assoc_name)
+    Form.new(association_name, parent, proc)
   end
 
   def valid?

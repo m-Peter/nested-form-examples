@@ -1,13 +1,14 @@
 class Form
   include ActiveModel::Validations
 
-  attr_reader :association_name, :parent, :model, :forms
+  attr_reader :association_name, :parent, :model, :forms, :proc
 
   def initialize(assoc_name, parent, proc, model=nil)
     @association_name = assoc_name
     @parent = parent
     @model = assign_model(model)
     @forms = []
+    @proc = proc
     class_eval &proc
     enable_autosave
     populate_forms
@@ -20,6 +21,14 @@ class Form
       else
         model.send("#{key}=", value)
       end
+    end
+  end
+
+  def get_model(assoc_name)
+    if form = find_form_by_assoc_name(assoc_name)
+      form.get_model(assoc_name)
+    else  
+      Form.new(association_name, parent, proc)
     end
   end
 
@@ -161,11 +170,9 @@ class Form
 
   def fetch_or_initialize_model
     if parent.send("#{association_name}")
-      model = parent.send("#{association_name}")
+      parent.send("#{association_name}")
     else
-      model_class = association_name.to_s.camelize.constantize
-      model = model_class.new
-      parent.send("#{association_name}=", model)
+      parent.send("build_#{association_name}")
     end
   end
 

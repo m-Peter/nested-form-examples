@@ -16,7 +16,7 @@ class FormDefinition
     when :has_one
       Form.new(assoc_name, parent, proc)
     when :has_many
-      FormCollection.new(assoc_name, parent, proc, records)
+      FormCollection.new(assoc_name, parent, proc, {records: records})
     end
   end
 

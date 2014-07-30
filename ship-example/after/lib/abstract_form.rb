@@ -19,6 +19,11 @@ class AbstractForm
     end
   end
 
+  def get_model(assoc_name)
+    form = find_form_by_assoc_name(assoc_name)
+    form.get_model(assoc_name)
+  end
+
   def save
     if valid?
       ActiveRecord::Base.transaction do
@@ -66,7 +71,7 @@ class AbstractForm
       if options && options[:required]
         validates_presence_of *names
       end
-      
+
       names.each do |attribute|
         delegate attribute, to: :model
         delegate "#{attribute}=", to: :model
