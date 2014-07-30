@@ -1,4 +1,4 @@
-class ConferenceForm < AbstractForm
+class ConferenceForm < ActiveForm::Base
   attributes :name, :city, required: true
 
   association :speaker do
