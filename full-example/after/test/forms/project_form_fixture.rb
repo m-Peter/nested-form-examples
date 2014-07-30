@@ -1,4 +1,4 @@
-class ProjectFormFixture < AbstractForm
+class ProjectFormFixture < ActiveForm::Base
   attributes :name, :description, :owner_id
 
   association :tasks do

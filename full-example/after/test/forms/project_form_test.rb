@@ -41,15 +41,15 @@ class ProjectFormTest < ActiveSupport::TestCase
   end
 
   test "project form provides getter method for tasks sub-form" do
-    assert_instance_of FormCollection, @tasks_form
+    assert_instance_of ActiveForm::FormCollection, @tasks_form
   end
 
   test "project form provides getter method for contributors sub-form" do
-    assert_instance_of FormCollection, @contributors_form
+    assert_instance_of ActiveForm::FormCollection, @contributors_form
   end
 
   test "project form provides getter method for owner sub-form" do
-    assert_instance_of Form, @owner_form
+    assert_instance_of ActiveForm::Form, @owner_form
   end
 
   test "tasks sub-form contains association name and parent" do
@@ -86,7 +86,7 @@ class ProjectFormTest < ActiveSupport::TestCase
     tasks = @form.tasks
 
     tasks.each do |form|
-      assert_instance_of Form, form
+      assert_instance_of ActiveForm::Form, form
       assert_instance_of Task, form.model
     end
   end
@@ -97,7 +97,7 @@ class ProjectFormTest < ActiveSupport::TestCase
     contributors = @form.contributors
 
     contributors.each do |form|
-      assert_instance_of Form, form
+      assert_instance_of ActiveForm::Form, form
       assert_instance_of Person, form.model
     end
   end
@@ -107,7 +107,7 @@ class ProjectFormTest < ActiveSupport::TestCase
 
     owner = @form.owner
 
-    assert_instance_of Form, owner
+    assert_instance_of ActiveForm::Form, owner
     assert_instance_of Person, owner.model
   end
 
@@ -116,7 +116,7 @@ class ProjectFormTest < ActiveSupport::TestCase
     assert_equal 1, @tasks_form.models.size
     
     @tasks_form.each do |form|
-      assert_instance_of Form, form
+      assert_instance_of ActiveForm::Form, form
       assert_instance_of Task, form.model
       assert form.model.new_record?
 
@@ -136,7 +136,7 @@ class ProjectFormTest < ActiveSupport::TestCase
     assert_equal 2, @contributors_form.models.size
 
     @contributors_form.each do |form|
-      assert_instance_of Form, form
+      assert_instance_of ActiveForm::Form, form
       assert_instance_of Person, form.model
       assert form.model.new_record?
 
