@@ -1,4 +1,4 @@
-class UserForm < AbstractForm
+class UserForm < ActiveForm::Base
   attributes :name, :age, :gender, required: true
 
   association :email do
