@@ -23,7 +23,7 @@
 
   <h2>Speaker Details</h2>
   <%= f.fields_for :speaker do |speaker_fields| %>
-    <%= render "speaker", :f => speaker_fields %>
+    <%= render "speaker_fields", :f => speaker_fields %>
   <% end %>
 
   <div class="actions">
