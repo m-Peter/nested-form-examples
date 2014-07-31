@@ -60,9 +60,6 @@ module ApplicationHelper
     partial = get_partial_path(custom_partial, association)
     locals =  render_options.delete(:locals) || {}
     method_name = f.respond_to?(:semantic_fields_for) ? :semantic_fields_for : (f.respond_to?(:simple_fields_for) ? :simple_fields_for : :fields_for)
-    if association.to_s == "owner"
-      new_object = Person.new
-    end
     f.send(method_name, association, new_object, {:child_index => "new_#{association}"}.merge(render_options)) do |builder|
       partial_options = {form_name.to_sym => builder, :dynamic => true}.merge(locals)
       render(partial, partial_options)
@@ -122,8 +119,7 @@ module ApplicationHelper
   # `` has_many :admin_comments, class_name: "Comment", conditions: { author: "Admin" }
   # will create new Comment with author "Admin"
   def create_object(f, association, force_non_association_create=false)
-    #f.object.get_model(association)
-    #f.object.class.reflect_on_association(association)
+    f.object.get_model(association)
   end
 
   def get_partial_path(partial, association)
