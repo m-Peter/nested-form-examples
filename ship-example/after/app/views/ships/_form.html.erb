@@ -39,11 +39,13 @@
   <h2>Pilots</h2>
   <div id="pilots">
     <%= f.fields_for :pilots do |pilot_fields| %>
-      <%= render "pilots", :f => pilot_fields %>
+      <%= render "pilot_fields", :f => pilot_fields %>
     <% end %>
   </div>
 
-  <%= link_to_add_fields("Add a Pilot", f, :pilots) %>
+  <div class="links">
+    <%= link_to_add_association "Add a Pilot", f, :pilots %>
+  </div>
 
   <div class="actions">
     <%= f.submit %>
