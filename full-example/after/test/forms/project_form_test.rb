@@ -48,6 +48,10 @@ class ProjectFormTest < ActiveSupport::TestCase
     assert_instance_of ActiveForm::FormCollection, @contributors_form
   end
 
+  test "project form provides getter methpd fpr project_tags sub-form" do
+    assert_instance_of ActiveForm::FormCollection, @project_tags_form
+  end
+
   test "project form provides getter method for owner sub-form" do
     assert_instance_of ActiveForm::Form, @owner_form
   end
@@ -64,6 +68,12 @@ class ProjectFormTest < ActiveSupport::TestCase
     assert_equal @project, @contributors_form.parent
   end
 
+  test "project-tags sub-form contains association name and parent" do
+    assert_equal :project_tags, @project_tags_form.association_name
+    assert_equal 1, @project_tags_form.records
+    assert_equal @project, @project_tags_form.parent
+  end
+
   test "owner sub-form contains association name and parent" do
     assert_equal :owner, @owner_form.association_name
     assert_equal @project, @owner_form.parent
@@ -75,6 +85,9 @@ class ProjectFormTest < ActiveSupport::TestCase
 
     assert @contributors_form.represents?("contributors")
     assert_not @contributors_form.represents?("contributor")
+
+    assert @project_tags_form.represents?("project_tags")
+    assert_not @project_tags_form.represents?("project_tag")
 
     assert @owner_form.represents?("owner")
     assert_not @owner_form.represents?("person")
@@ -99,6 +112,17 @@ class ProjectFormTest < ActiveSupport::TestCase
     contributors.each do |form|
       assert_instance_of ActiveForm::Form, form
       assert_instance_of Person, form.model
+    end
+  end
+
+  test "project form provides getter method for project_tag objects" do
+    assert_respond_to @form, :project_tags
+
+    project_tags = @form.project_tags
+
+    project_tags.each do |form|
+      assert_instance_of ActiveForm::Form, form
+      assert_instance_of ProjectTag, form.model
     end
   end
 
@@ -149,6 +173,263 @@ class ProjectFormTest < ActiveSupport::TestCase
     end
 
     assert_equal 2, @form.model.contributors.size
+  end
+
+  test "project form initializes the number of records specified for project_tags" do
+    assert_respond_to @project_tags_form, :models
+    assert_equal 1, @project_tags_form.models.size
+
+    @project_tags_form.each do |form|
+      assert_instance_of ActiveForm::Form, form
+      assert_instance_of ProjectTag, form.model
+      assert form.model.new_record?
+
+      assert_respond_to form, :tag_id
+      assert_respond_to form, :tag_id=
+    end
+
+    assert_equal 1, @form.model.project_tags.size
+  end
+
+  test "project_tags sub-form declares the tag sub-form" do
+    assert_equal 1, @project_tags_form.forms.size
+    tag_form = @project_tags_form.models[0].tag
+
+    assert_instance_of ActiveForm::Form, tag_form
+    assert_equal :tag, tag_form.association_name
+    assert_instance_of ProjectTag, tag_form.parent
+    assert_instance_of Tag, tag_form.model
+
+    assert_respond_to tag_form, :name
+    assert_respond_to tag_form, :name=
+  end
+
+  test "create new project with new tag" do
+    project = Project.new
+    project_form = ProjectFormFixture.new(project)
+
+    params = {
+      name: "Add Form Models",
+      description: "Google Summer of Code 2014",
+
+      project_tags_attributes: {
+        "0" => {
+          tag_attributes: {
+            name: "Html Forms"
+          }
+        }
+      }
+    }
+
+    project_form.submit(params)
+
+    assert_difference('Project.count') do
+      project_form.save
+    end
+
+    assert_equal "Add Form Models", project_form.name
+    assert_equal "Google Summer of Code 2014", project_form.description
+
+    assert_equal 1, project_form.project_tags.size
+
+    assert_equal "Html Forms", project_form.project_tags[0].tag.name
+  end
+
+  test "create new project with existing tag" do
+    ## FAILS
+    tag = Tag.create(name: "Html Forms")
+    project = Project.new
+    project_form = ProjectFormFixture.new(project)
+
+    params = {
+      name: "Add Form Models",
+      description: "Google Summer of Code 2014",
+
+      project_tags_attributes: {
+        "0" => { tag_id: tag.id }
+      }
+    }
+
+    project_form.submit(params)
+
+    assert_difference('Project.count') do
+      project_form.save
+    end
+
+    assert_equal "Add Form Models", project_form.name
+    assert_equal "Google Summer of Code 2014", project_form.description
+
+    assert_equal 1, project_form.project_tags.size
+
+    assert_equal "Html Forms", project_form.project_tags[0].tag.name
+  end
+
+  test "update existing project with new tag" do
+    project = Project.create(name: "Add Form Models", description: "Google Summer of Code 2014")
+    project_form = ProjectFormFixture.new(project)
+
+    params = {
+      project_tags_attributes: {
+        "0" => {
+          tag_attributes: {
+            name: "Html Forms"
+          }
+        }
+      }
+    }
+
+    project_form.submit(params)
+
+    assert_difference('Project.count', 0) do
+      project_form.save
+    end
+
+    assert_equal "Add Form Models", project_form.name
+    assert_equal "Google Summer of Code 2014", project_form.description
+
+    assert_equal 1, project_form.project_tags.size
+
+    assert_equal "Html Forms", project_form.project_tags[0].tag.name
+  end
+
+  test "update existing project with existing tag" do
+    ## FAILS
+    tag = Tag.create(name: "Html Forms")
+    project = Project.create(name: "Form Models", description: "Google Summer of Code 2014")
+    project_form = ProjectFormFixture.new(project)
+
+    params = {
+      name: "Add Form Models",
+
+      project_tags_attributes: {
+        "0" => { tag_id: tag.id }
+      }
+    }
+
+    project_form.submit(params)
+
+    assert_difference('Project.count', 0) do
+      project_form.save
+    end
+
+    assert_equal "Add Form Models", project_form.name
+    assert_equal "Google Summer of Code 2014", project_form.description
+
+    assert_equal 1, project_form.project_tags.size
+
+    assert_equal "Html Forms", project_form.project_tags[0].tag.name
+  end
+
+  test "create new project with new owner" do
+    project = Project.new
+    project_form = ProjectFormFixture.new(project)
+
+    params = {
+      name: "Add Form Models",
+      description: "Nesting models in a single form",
+
+      owner_attributes: {
+        name: "Petros Markou",
+        role: "Rails GSoC student",
+        description: "Working on adding Form Models"
+      }
+    }
+
+    project_form.submit(params)
+
+    assert_difference('Project.count') do
+      project_form.save
+    end
+
+    assert_equal "Add Form Models", project_form.name
+    assert_equal "Nesting models in a single form", project_form.description
+
+    assert_equal "Petros Markou", project_form.owner.name
+    assert_equal "Rails GSoC student", project_form.owner.role
+    assert_equal "Working on adding Form Models", project_form.owner.description
+  end
+
+  test "create new project with existing owner" do
+    ## FAILS
+    owner = Person.create(name: "Carlos Silva", role: "RoR Core Member", description: "Mentoring Peter throughout GSoC")
+    project = Project.new
+    project_form = ProjectFormFixture.new(project)
+
+    params = {
+      name: "Add Form Models",
+      description: "Nesting models in a single form",
+
+      owner_id: owner.id
+    }
+
+    project_form.submit(params)
+
+    assert_difference('Project.count') do
+      project_form.save
+    end
+
+    assert_equal "Add Form Models", project_form.name
+    assert_equal "Nesting models in a single form", project_form.description
+
+    assert_equal "Carlos Silva", project_form.owner.name
+    assert_equal "RoR Core Member", project_form.owner.role
+    assert_equal "Assisting Peter throughout GSoC", project_form.owner.description
+  end
+
+  test "update project with new owner" do
+    project = Project.create(name: "Form Models", description: "GSoC 2014")
+    project_form = ProjectFormFixture.new(project)
+    
+    params = {
+      name: "Add Form Models",
+      description: "Nesting models in a single form",
+      
+      owner_attributes: {
+        name: "Carlos Silva",
+        role: "RoR Core Team",
+        description: "Mentoring Peter throughout GSoC"
+      }
+    }
+
+    project_form.submit(params)
+
+    assert_difference('Project.count', 0) do
+      project_form.save
+    end
+
+    assert_equal "Add Form Models", project_form.name
+    assert_equal "Nesting models in a single form", project_form.description
+
+    assert_equal "Carlos Silva", project_form.owner.name
+    assert_equal "RoR Core Team", project_form.owner.role
+    assert_equal "Mentoring Peter throughout GSoC", project_form.owner.description
+  end
+
+  test "update project with existing owner" do
+    ## FAILS
+    owner = Person.create(name: "Carlos Silva", role: "RoR Core Member", description: "Mentoring Peter throughout GSoC")
+    project = Project.create(name: "Form Models", description: "GSoC 2014")
+    project_form = ProjectFormFixture.new(project)
+    
+    params = {
+      name: "Add Form Models",
+      description: "Nesting models in a single form",
+      
+      owner_id: owner.id
+    }
+
+    project_form.submit(params)
+
+    assert_difference('Project.count', 0) do
+      project_form.save
+    end
+
+    assert_equal "Add Form Models", project_form.name
+    assert_equal "Nesting models in a single form", project_form.description
+
+    assert_equal "Carlos Silva", project_form.owner.name
+    assert_equal "RoR Core Member", project_form.owner.role
+    assert_equal "Mentoring Peter throughout GSoC", project_form.owner.description
   end
 
   test "project form initializes the owner record" do
@@ -244,28 +525,6 @@ class ProjectFormTest < ActiveSupport::TestCase
     assert_equal 2, @form.contributors.size
   end
 
-  test "project form syncs its model and its owner" do
-    params = {
-      name: "Add Form Models",
-      description: "Nesting models in a single form",
-
-      owner_attributes: {
-        name: "Petros Markou",
-        role: "Rails GSoC student",
-        description: "Working on adding Form Models"
-      }
-    }
-
-    @form.submit(params)
-
-    assert_equal "Add Form Models", @form.name
-    assert_equal "Nesting models in a single form", @form.description
-
-    assert_equal "Petros Markou", @form.owner.name
-    assert_equal "Rails GSoC student", @form.owner.role
-    assert_equal "Working on adding Form Models", @form.owner.description
-  end
-
   test "project form saves its model and its tasks" do
     params = {
       name: "Add Form Models",
@@ -331,60 +590,6 @@ class ProjectFormTest < ActiveSupport::TestCase
     @form.contributors.each do |contributor_form|
       assert contributor_form.persisted?
     end
-  end
-
-  test "project form saves its model and creates new owner" do
-    params = {
-      name: "Add Form Models",
-      description: "Nesting models in a single form",
-
-      owner_attributes: {
-        name: "Petros Markou",
-        role: "Rails GSoC student",
-        description: "Working on adding Form Models"
-      }
-    }
-
-    @form.submit(params)
-
-    assert_difference('Project.count') do
-      @form.save
-    end
-
-    assert_equal "Add Form Models", @form.name
-    assert_equal "Nesting models in a single form", @form.description
-
-    assert_equal "Petros Markou", @form.owner.name
-    assert_equal "Rails GSoC student", @form.owner.role
-    assert_equal "Working on adding Form Models", @form.owner.description
-
-    assert @form.persisted?
-    assert @form.owner.persisted?
-  end
-
-  test "project form saves its model and assigns existing owner" do
-    params = {
-      name: "Add Form Models",
-      description: "Nesting models in a single form",
-
-      owner_id: people(:carlos).id
-    }
-
-    @form.submit(params)
-
-    assert_difference('Project.count') do
-      @form.save
-    end
-
-    assert_equal "Add Form Models", @form.name
-    assert_equal "Nesting models in a single form", @form.description
-
-    assert_equal "Carlos Silva", @form.owner.name
-    assert_equal "RoR Core Member", @form.owner.role
-    assert_equal "Assisting Peter throughout GSoC", @form.owner.description
-
-    assert @form.persisted?
-    assert @form.owner.persisted?
   end
 
   test "project form updates its model and its tasks" do
@@ -456,58 +661,6 @@ class ProjectFormTest < ActiveSupport::TestCase
     end
   end
 
-  test "project form updates its model and creates new owner" do
-    project = projects(:gsoc)
-    form = ProjectFormFixture.new(project)
-    params = {
-      name: "Add Form Models",
-      description: "Nesting models in a single form",
-      
-      owner_attributes: {
-        name: "Carlos Silva",
-        role: "RoR Core Team",
-        description: "Assisting Peter throughout GSoC"
-      }
-    }
-
-    form.submit(params)
-
-    assert_difference('Project.count', 0) do
-      form.save
-    end
-
-    assert_equal "Add Form Models", form.name
-    assert_equal "Nesting models in a single form", form.description
-
-    assert_equal "Carlos Silva", form.owner.name
-    assert_equal "RoR Core Team", form.owner.role
-    assert_equal "Assisting Peter throughout GSoC", form.owner.description
-  end
-
-  test "project form updates its model and assigns existing owner" do
-    project = projects(:gsoc)
-    form = ProjectFormFixture.new(project)
-    params = {
-      name: "Add Form Models",
-      description: "Nesting models in a single form",
-      
-      owner_id: people(:carlos).id
-    }
-
-    form.submit(params)
-
-    assert_difference('Project.count', 0) do
-      form.save
-    end
-
-    assert_equal "Add Form Models", form.name
-    assert_equal "Nesting models in a single form", form.description
-
-    assert_equal "Carlos Silva", form.owner.name
-    assert_equal "RoR Core Member", form.owner.role
-    assert_equal "Assisting Peter throughout GSoC", form.owner.description
-  end
-
   test "project form responds to tasks writer method" do
     assert_respond_to @form, :tasks_attributes=
   end
@@ -519,108 +672,5 @@ class ProjectFormTest < ActiveSupport::TestCase
   test "project form responds to owner writer method" do
     assert_respond_to @form, :owner_attributes=
   end
-
-  def clean_database
-    Project.delete_all
-    Person.delete_all
-  end
-
-  test "new Project with new Owner" do
-    clean_database
-
-    gsoc = Project.new(name: "Add Form Models", description: "Nesting Form Models")
-
-    owner = gsoc.build_owner
-    owner.name = "Peter Markou"
-    owner.role = "GSoC Rails student"
-    owner.description = "Working on adding Form Models"
-    gsoc.save
-
-    assert gsoc.persisted?
-    assert gsoc.owner.persisted?
-
-    assert_equal "Add Form Models", gsoc.name
-    assert_equal "Nesting Form Models", gsoc.description
-
-    assert_equal "Peter Markou", gsoc.owner.name
-    assert_equal "GSoC Rails student", gsoc.owner.role
-    assert_equal "Working on adding Form Models", gsoc.owner.description
-  end
-
-  test "new Project with existing Owner" do
-    clean_database
-
-    owner = Person.create(name: "Peter Markou", role: "GSoC Rails student", description: "Working on adding Form Models")
-
-    assert owner.persisted?
-    assert_nil owner.project_id
-
-    gsoc = Project.new(name: "Add Form Models", description: "Nesting Form Models")
-
-    gsoc.owner = Person.create
-
-    #assert_nil gsoc.owner_id
-
-    gsoc.owner_id = owner.id
-
-    assert_equal owner.id, gsoc.owner_id
-
-    gsoc.save
-
-    assert gsoc.persisted?
-    assert gsoc.owner.persisted?
-
-    assert_equal "Add Form Models", gsoc.name
-    assert_equal "Nesting Form Models", gsoc.description
-
-    #assert_equal owner.id, gsoc.owner_id
-    assert_equal "Peter Markou", gsoc.owner.name
-    assert_equal "GSoC Rails student", gsoc.owner.role
-    assert_equal "Working on adding Form Models", gsoc.owner.description
-  end
-
-  test "existing Project with new Owner" do
-    clean_database
-
-    gsoc = Project.create(name: "Add Form Models", description: "Nesting Form Models")
-
-    owner = gsoc.build_owner
-    owner.name = "Peter Markou"
-    owner.role = "GSoC Rails student"
-    owner.description = "Working on adding Form Models"
-    gsoc.save
-
-    assert gsoc.persisted?
-    assert gsoc.owner.persisted?
-
-    assert_equal "Add Form Models", gsoc.name
-    assert_equal "Nesting Form Models", gsoc.description
-
-    assert_equal "Peter Markou", gsoc.owner.name
-    assert_equal "GSoC Rails student", gsoc.owner.role
-    assert_equal "Working on adding Form Models", gsoc.owner.description
-  end
-
-  test "existing Project with existing Owner" do
-    clean_database
-
-    owner = Person.create(name: "Peter Markou", role: "GSoC Rails student", description: "Working on adding Form Models")
-    gsoc = Project.create(name: "Add Form Models", description: "Nesting Form Models")
-
-    #gsoc.build_owner
-    
-    gsoc.owner_id = owner.id
-
-    gsoc.save
-
-    assert_equal "Add Form Models", gsoc.name
-    assert_equal "Nesting Form Models", gsoc.description
-
-    assert_equal "Peter Markou", gsoc.owner.name
-    assert_equal "GSoC Rails student", gsoc.owner.role
-    assert_equal "Working on adding Form Models", gsoc.owner.description
-
-    assert gsoc.persisted?
-    assert gsoc.owner.persisted?
-  end
+  
 end
