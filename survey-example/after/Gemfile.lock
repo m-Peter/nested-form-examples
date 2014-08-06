@@ -1,6 +1,6 @@
 GIT
   remote: git://github.com/m-Peter/activeform.git
-  revision: cb1c4a032a598714138e4f142d5349d47f2dc936
+  revision: 74db44704a19676b54b4ee87c1802846f0fc9eeb
   specs:
     active_form (0.0.1)
       rails (~> 4.1.1)
