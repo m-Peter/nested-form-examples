@@ -373,7 +373,7 @@ class ProjectFormTest < ActiveSupport::TestCase
 
     assert_equal "Carlos Silva", project_form.owner.name
     assert_equal "RoR Core Member", project_form.owner.role
-    assert_equal "Assisting Peter throughout GSoC", project_form.owner.description
+    assert_equal "Mentoring Peter throughout GSoC", project_form.owner.description
   end
 
   test "update project with new owner" do
