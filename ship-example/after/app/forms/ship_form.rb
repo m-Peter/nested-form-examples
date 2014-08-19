@@ -1,4 +1,6 @@
 class ShipForm < ActiveForm::Base
+  self.main_model = :ship
+  
   attributes :name, :crew, :speed, :armament, required: true
   attribute :has_astromech
 
